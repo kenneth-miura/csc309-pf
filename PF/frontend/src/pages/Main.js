@@ -10,17 +10,17 @@ function Main() {
     <div 
     style={{width: '100%', height: '100%'}}
     className="MainPage">
-        <Navbar position="sticky"></Navbar>
-
-        <Container class="WelcomeText" style={{position: "relative", width: "100%", top: "80%"}}>
-            <Card >
-                <h1>WELCOME TO TORONTO FITNESS</h1>
-            </Card>
-        </Container>
-
-        <div class="Carousel" style={{position: "absolute", width: '100%', top: "10px"}}>
+        <div class="Carousel" style={{position: "absolute", width: '100%', top: "50px"}}>
             <ImageCarousel></ImageCarousel>
         </div>
+
+        <Card class="WelcomeText" style={{backgroundColor: "#d62828", position: "fixed", width: "100%", top: "467px"}}>
+            <h1>WELCOME TO TORONTO FITNESS</h1>
+        </Card>
+
+        <Container >
+           
+        </Container>
 
     </div>
   );
