@@ -19,7 +19,7 @@ function LoginCard(props) {
         style={{
           backgroundColor: "white",
           width: "700px",
-          height: "450px",
+          height: "500px",
           marginTop: "20vh",
           marginBottom: "24vh",
         }}
@@ -50,10 +50,11 @@ function LoginCard(props) {
             Login
           </Button>
         </div>
-        <hr></hr>
+        <hr style={{color: "#d62828", width: "300px", marginTop: "40px"}}></hr>
         <div
           style={{
-            paddingTop: "20px",
+            margin: "0px",
+            padding: "0px",
             display: "flex",
             justifyContent: "center",
           }}
@@ -62,7 +63,7 @@ function LoginCard(props) {
         </div>
         <div
           style={{
-            paddingTop: "20px",
+            paddingTop: "0px",
             display: "flex",
             justifyContent: "center",
           }}

@@ -15,6 +15,18 @@ function Navbar({isLoginPage}) {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <MainLogo style={{ width: "15%" }}></MainLogo>
+          {isLoginPage &&
+          <Button
+            sx={{ my: 2, color: "white", display: "block"}}
+          >
+            <NavLink
+              to={`/`}
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              Home
+            </NavLink>
+          </Button>
+          }
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
