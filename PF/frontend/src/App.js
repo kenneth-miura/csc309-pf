@@ -11,7 +11,6 @@ function App() {
       <header className="App-header">
         <Navbar position="sticky"></Navbar>
       </header>
-      {/* <LoginPage></LoginPage> */}
       <HomePage></HomePage>
     </div>
   );

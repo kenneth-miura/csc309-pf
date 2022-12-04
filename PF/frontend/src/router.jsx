@@ -1,9 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
 import App from './App';
 import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
-import TextSubPage from './pages/TestSubPage'
+import TestSubPage from './pages/TestSubPage'
 
 import {
     createBrowserRouter,
@@ -24,7 +23,7 @@ const router = createBrowserRouter([
     },
     {
       path: "/login/studio",
-      element: <TextSubPage></TextSubPage>
+      element: <TestSubPage></TestSubPage>
   }
 ]);
 
