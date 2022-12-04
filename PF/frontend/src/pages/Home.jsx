@@ -4,15 +4,18 @@ import { Card, Box, Button } from "@mui/material";
 
 function Main() {
   return (
-    <div className="container">
+    <div id="container">
       <Box id="box1">
         <Box id="box2">
           {/* <ImageCarousel style={{boxShadow: 'none', margin: '0px', padding: '0px'}}></ImageCarousel> */}
-          <Card id="imageCard">
-            <img src={require("../images/coach.png")}></img>
-          </Card>
+          <div style={{backgroundColor: "#d62828"}}>
+            <Card id="imageCard">
+              <img id="mainImage" src={require("../images/coach.png")}></img>
+            </Card>
+          </div>
+
           <Card id="welcomeText">
-            <h1>WELCOME TO TORONTO FITNESS</h1>
+            <h1 id="title">WELCOME TO TORONTO FITNESS</h1>
           </Card>
         </Box>
         <Box id="box3">

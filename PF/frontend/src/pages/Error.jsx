@@ -7,7 +7,7 @@ function ErrorPage() {
     <div>
       <Box id="baseBox">
         <Box class="box">
-          <Card id="imageCard">
+          <Card id="errImageCard">
             <img src={require("../images/error.png")}></img>
             <h2>
               SOMETHING WENT WRONG
