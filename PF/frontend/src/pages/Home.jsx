@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
+import Home from "@mui/icons-material/Home";
 
-function Main() {
+function HomePage() {
   return (
     <div id="container" style={{ display: "flex", flexDirection: "column" }}>
       <Box
@@ -74,4 +75,4 @@ function Main() {
   );
 }
 
-export default Main;
+export default HomePage;

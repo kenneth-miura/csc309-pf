@@ -9,7 +9,7 @@ import { Outlet, NavLink } from "react-router-dom";
 
 const pages = ["studios", "classes", "pricing"];
 
-function Navbar() {
+function Navbar({isLoginPage}) {
   return (
     <AppBar style={{ backgroundColor: "#d62828" }}>
       <Container maxWidth="xl">
@@ -30,6 +30,8 @@ function Navbar() {
               </Button>
             ))}
           </Box>
+          {/* Renders this part only if it's not on the login page. */}
+          {!isLoginPage &&
           <Button
             sx={{ my: 2, color: "white", display: "block", right: "40px" }}
           >
@@ -40,6 +42,7 @@ function Navbar() {
               Login / Sign Up
             </NavLink>
           </Button>
+          }
         </Toolbar>
       </Container>
     </AppBar>

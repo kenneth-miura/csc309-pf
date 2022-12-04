@@ -1,8 +1,13 @@
 import * as React from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import Navbar from "../Navbar";
+
 
 function LoginCard(props) {
   return (
+    <div>
+    <Navbar position="sticky" isLoginPage={true}></Navbar>
     <div
       style={{
         backgroundColor: "white",
@@ -19,7 +24,7 @@ function LoginCard(props) {
           marginBottom: "24vh",
         }}
       >
-        <h3 style={{ textAlign: "center", color: "#d62828" }}>LOGIN</h3>
+        <h3 style={{ textAlign: "center", color: "#d62828", fontSize: "50px" }}>LOGIN</h3>
         <div style={{ display: "flex", justifyContent: "center" }}>
           <FormControl style={{ width: "300px" }}>
             <Input
@@ -67,6 +72,7 @@ function LoginCard(props) {
           </Button>
         </div>
       </Card>
+    </div>
     </div>
   );
 }

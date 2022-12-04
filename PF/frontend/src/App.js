@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Main from './pages/Home'
+import HomePage from './pages/Home'
 import Navbar from './components/Navbar';
 import LoginPage from './pages/Login';
 import './App.css';
@@ -12,7 +12,7 @@ function App() {
         <Navbar position="sticky"></Navbar>
       </header>
       {/* <LoginPage></LoginPage> */}
-      <Main></Main>
+      <HomePage></HomePage>
     </div>
   );
 }
