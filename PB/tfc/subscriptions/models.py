@@ -26,6 +26,9 @@ class SubscriptionPlan(models.Model):
     price = models.FloatField(null=False)
     period = models.IntegerField(choices=MODEL_TYPES)
 
+    def get_period_as_string(self):
+        return get_period(self.period)
+
     def __str__(self):
         if self.period == 0:
             return f"price: {self.price}, period: yearly, pk: {self.pk}"
