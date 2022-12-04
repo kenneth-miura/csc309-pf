@@ -4,11 +4,11 @@ import "./Error.css";
 
 function ErrorPage() {
   return (
-    <div>
+    <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
       <Box id="baseBox">
-        <Box class="box">
+        <Box class="errBox">
           <Card id="errImageCard">
-            <img src={require("../images/error.png")}></img>
+            <img id="errorImg" src={require("../images/error.png")}></img>
             <h2>
               SOMETHING WENT WRONG
             </h2>

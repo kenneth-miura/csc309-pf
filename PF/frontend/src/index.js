@@ -12,15 +12,16 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App></App>
+    element: <App></App>,
+    errorElement: <ErrorPage/>,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <RouterProvider router={router}></RouterProvider> */}
-    <App />
+    <RouterProvider router={router}></RouterProvider>
+    {/* <App /> */}
   </React.StrictMode>
 );
 
