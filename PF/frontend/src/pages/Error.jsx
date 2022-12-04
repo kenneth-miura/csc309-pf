@@ -4,7 +4,7 @@ import "./Error.css";
 
 function ErrorPage() {
   return (
-    <div style={{display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
+    <div>
       <Box id="baseBox">
         <Box class="errBox">
           <Card id="errImageCard">

@@ -1,0 +1,6 @@
+#basebox {
+    display: flex;
+    flex-direction: column;
+    top: 0px;
+    align-items: center;
+}
