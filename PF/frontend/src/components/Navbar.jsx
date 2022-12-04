@@ -6,9 +6,11 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import { IconButton, Typography, Menu } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { ReactComponent as MainLogo } from "../images/TFC_main.svg";
 import { Outlet, NavLink } from "react-router-dom";
+
 
 
 const pages = ['studios', 'classes', 'pricing', 'login'];
@@ -39,7 +41,7 @@ function Navbar() {
         <Toolbar disableGutters>
           <MainLogo style={{width: "15%"}}></MainLogo>
 
-          {/* <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -48,7 +50,7 @@ function Navbar() {
               onClick={handleOpenNavMenu}
               color="inherit"
             >
-              <MenuIcon />
+              {/* <MenuIcon /> */}
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -74,7 +76,7 @@ function Navbar() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box> */}
+          </Box>
 
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

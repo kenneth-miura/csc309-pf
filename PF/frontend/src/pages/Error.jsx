@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
 import "./Error.css";
+import { NavLink } from "react-router-dom";
 
 function ErrorPage() {
   return (
@@ -16,7 +17,7 @@ function ErrorPage() {
         </Box>
         <Box class="box">
           <Button id="goBackButton" variant="contained">
-            <h5>Go back</h5>
+            <NavLink to={`/`} style={{color: 'white', textDecoration: 'none'}}><h5>Go back</h5></NavLink>
           </Button>
         </Box>
       </Box>
