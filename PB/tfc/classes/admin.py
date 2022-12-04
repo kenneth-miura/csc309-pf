@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import CASCADE
 from django.contrib import admin
-from .models import UserEnroll, ClassInstance, ClassOffering, TimeInterval, Keyword
+from .models import UserInstanceEnroll, UserOfferingEnrollment, ClassInstance, ClassOffering, TimeInterval, Keyword
 
 
 class TimeIntervalAdmin(admin.TabularInline):
@@ -22,8 +22,6 @@ class ClassOfferingAdmin(admin.ModelAdmin):
             if isinstance(class_offering, ClassOffering):
                 class_offering.delete_future_instances()
 
-    def has_delete_permission(self, request, obj=None):
-        return False
 
     def has_add_permission(self, request):
         return True
@@ -42,4 +40,5 @@ admin.site.register(ClassOffering, ClassOfferingAdmin)
 admin.site.register(ClassInstance, ClassInstanceAdmin)
 
 # Uncomment this to test user enroll
-# admin.site.register(UserEnroll)
+admin.site.register(UserInstanceEnroll)
+admin.site.register(UserOfferingEnrollment)
