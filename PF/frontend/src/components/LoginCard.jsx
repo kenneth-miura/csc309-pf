@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
-import HomeIcon from '@mui/icons-material/Home';
-import Navbar from "../Navbar";
+import Navbar from "./Navbar";
 
 
 function LoginCard(props) {
