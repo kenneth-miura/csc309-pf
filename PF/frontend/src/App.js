@@ -1,7 +1,7 @@
-import ResponsiveAppBar from './components/Navbar'
 import './App.css';
-import Main from './pages/Main'
+import Main from './pages/Home'
 import Navbar from './components/Navbar';
+import ErrorPage from './pages/Error';
 
 function App() {
   return (
@@ -9,7 +9,8 @@ function App() {
       <header className="App-header">
         <Navbar position="sticky"></Navbar>
       </header>
-      <Main></Main>
+      {/* <Main></Main> */}
+      <ErrorPage></ErrorPage>
     </div>
   );
 }

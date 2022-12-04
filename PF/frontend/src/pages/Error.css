@@ -16,9 +16,11 @@
 }
 
 img {
-    object-fit: cover;
-    width: 30%;
-    height: 30%;
+    object-fit: fixed;
+    width: 20%;
+    height: 20%;
+    position: relative;
+    padding-top: 100px;
 }
 
 h2 {

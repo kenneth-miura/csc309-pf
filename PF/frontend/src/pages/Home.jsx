@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./Main.css";
+import "./Home.css";
 import { Card, Box, Button } from "@mui/material";
 
 function Main() {
@@ -27,13 +27,8 @@ function Main() {
         </Box>
         <Box>
           <Card id="joinCard">
-            <Button
-              id="joinButton"
-              variant="contained"
-            >
-              <h5>
-                JOIN NOW
-              </h5>
+            <Button id="joinButton" variant="contained">
+              <h5>JOIN NOW</h5>
             </Button>
           </Card>
         </Box>
