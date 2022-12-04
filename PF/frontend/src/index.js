@@ -8,14 +8,15 @@ import {
   RouterProvider,
   Route,
 } from "react-router-dom";
+import router from './router';
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App></App>,
-    errorElement: <ErrorPage/>,
-  },
-]);
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App></App>,
+//     errorElement: <ErrorPage/>,
+//   },
+// ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
