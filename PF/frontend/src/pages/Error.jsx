@@ -38,16 +38,24 @@ function ErrorPage() {
               src={require("../images/error.png")}
               alt="Person unplugging a wire"
             ></img>
-            <h2 style={{fontSize: "30px", color: "black", textAlign: "center"}}>SOMETHING WENT WRONG</h2>
+            <h2
+              style={{ fontSize: "30px", color: "black", textAlign: "center" }}
+            >
+              SOMETHING WENT WRONG
+            </h2>
           </Card>
         </Box>
         <Box class="box">
-          <Button id="goBackButton" variant="contained" style={{backgroundColor: "#d62828"}}>
+          <Button
+            id="goBackButton"
+            variant="contained"
+            style={{ backgroundColor: "#d62828" }}
+          >
             <NavLink
               to={`/`}
               style={{ color: "white", textDecoration: "none" }}
             >
-              <h5 style={{margin: "0px", fontSize: "20px"}}>Go to Home</h5>
+              <h5 style={{ margin: "0px", fontSize: "20px" }}>Go to Home</h5>
             </NavLink>
           </Button>
         </Box>

@@ -48,16 +48,24 @@ function Main() {
                 marginBottom: "30px",
               }}
             ></hr>
-            <h4 style={{fontSize: "30px", color: "gray"}}>
+            <h4 style={{ fontSize: "30px", color: "gray" }}>
               With 120+ classes to choose from, there’s a class for everyone at
               Toronto Fitness.
             </h4>
           </Card>
         </Box>
         <Box>
-          <Card id="joinCard" style={{boxShadow: "none"}}>
-            <Button id="joinButton" variant="contained" style={{backgroundColor: "#d62828", width: "400px", marginBottom:"50px"}}>
-              <h3 style={{margin: "0", padding: "0"}}>JOIN NOW</h3>
+          <Card id="joinCard" style={{ boxShadow: "none" }}>
+            <Button
+              id="joinButton"
+              variant="contained"
+              style={{
+                backgroundColor: "#d62828",
+                width: "400px",
+                marginBottom: "50px",
+              }}
+            >
+              <h3 style={{ margin: "0", padding: "0" }}>JOIN NOW</h3>
             </Button>
           </Card>
         </Box>
