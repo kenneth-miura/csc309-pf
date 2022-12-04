@@ -17,7 +17,7 @@ function ErrorPage() {
         </Box>
         <Box class="box">
           <Button id="goBackButton" variant="contained">
-            <NavLink to={`/`} style={{color: 'white', textDecoration: 'none'}}><h5>Go back</h5></NavLink>
+            <NavLink to={`/`} style={{color: 'white', textDecoration: 'none'}}><h5>Go to Home</h5></NavLink>
           </Button>
         </Box>
       </Box>

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Grid, Card, Box, Button, FormControl, InputLabel, Input, FormHelperText } from "@mui/material";
+import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 
 function LoginCard(props) {
 
@@ -14,7 +14,7 @@ function LoginCard(props) {
             </FormControl>
         </div>
         <div style={{paddingTop: "20px", display: "flex", justifyContent: "center"}}>
-            <Button>Login</Button>
+            <Button variant="contained" style={{backgroundColor: "#d62828" }}>Login</Button>
         </div>
       </Card>
     </div>
