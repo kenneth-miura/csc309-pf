@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
+import Cookies from 'universal-cookie';
 
 function LoginCard(props) {
   const [email, setEmail] = useState("");
@@ -9,9 +10,8 @@ function LoginCard(props) {
 
   function handleSubmit(data) {
     data.preventDefault();
+    const cookie = new Cookies();
 
-    console.log(email);
-    console.log(password);
     const formData = new FormData();
     formData.append("username", email);
     formData.append("password", password);
@@ -26,17 +26,13 @@ function LoginCard(props) {
     })
     .then((response) => response.json())
       .then((data) => {
-        const response = JSON.stringify(data);
+        cookie.set('accessToken', data['access'], {path: '/'})
 
-        console.log("PRINTING DATA");
-        console.log(response);
-        console.log("PRINTING DATA");
+        console.log(data['access'])
+        console.log(cookie.get('accessToken'));
       })
       .catch((error) => {
         console.log(error);
-      })
-      .finally(() => {
-        console.log("finally");
       });
   }
 
