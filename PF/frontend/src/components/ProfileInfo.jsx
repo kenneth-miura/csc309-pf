@@ -5,37 +5,48 @@ import { Stack } from "@mui/system";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Grid } from "@mui/material";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 
 function ProfileInfoCard(props) {
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [phoneNum, setPhoneNum] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
-
     fetch("http://127.0.0.1:8000/accounts/info/", {
       method: "GET",
       headers: {
-        'Accept': "application/json",
-        'Authorization': 'Bearer ' + accessToken, 
+        Accept: "application/json",
+        Authorization: "Bearer " + accessToken,
       },
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("I GRABBED DATA ON LOAD")
-        console.log(data);
-        // navigate("/");
-        // console.log(data['access'])
-        // console.log(cookie.get('fakeCookie'))
-        // console.log(cookie.get('accessToken'));
+        // console.log("Retrieved data upon page load.")
+        // console.log(data);
+        // console.log(data.avatar);
+
+        setUsername(data.username);
+        setPassword(data.password);
+        setEmail(data.email);
+        setFirstName(data.first_name);
+        setLastName(data.last_name);
+        setAvatar(data.avatar);
+        setPhoneNum(data.phone_number);
       })
       .catch((error) => {
         console.log(error);
       });
-  })
+  });
 
   return (
     <div>
@@ -66,8 +77,8 @@ function ProfileInfoCard(props) {
             <Card
               style={{
                 backgroundColor: "white",
-                width: "80%",
-                height: "400px",
+                width: "50%",
+                height: "200px",
               }}
             >
               <Grid container spacing={2}>
@@ -79,8 +90,8 @@ function ProfileInfoCard(props) {
                       marginTop: "50px",
                       marginLeft: "50px",
                     }}
-                    alt="avatar"
-                    src="https://cdn.wallpapersafari.com/31/6/nb4NIR.jpg"
+                    alt={firstName}
+                    src={avatar}
                   ></Avatar>
                 </Grid>
                 <Grid>
@@ -91,9 +102,10 @@ function ProfileInfoCard(props) {
                       paddingLeft: "50px",
                       paddingTop: "10px",
                       fontSize: "40px",
+                      marginBottom: "0px",
                     }}
                   >
-                    YOUR NAME
+                    {firstName + " " + lastName}
                   </h2>
                   <p
                     style={{
@@ -102,7 +114,25 @@ function ProfileInfoCard(props) {
                       paddingLeft: "50px",
                     }}
                   >
-                    EXTRA INFORMATION
+                    {username}
+                  </p>
+                  <p
+                    style={{
+                      textAlign: "left",
+                      color: "brown",
+                      paddingLeft: "50px",
+                    }}
+                  >
+                    {email}
+                  </p>
+                  <p
+                    style={{
+                      textAlign: "left",
+                      color: "brown",
+                      paddingLeft: "50px",
+                    }}
+                  >
+                    {phoneNum}
                   </p>
                 </Grid>
               </Grid>

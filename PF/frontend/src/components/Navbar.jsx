@@ -17,6 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = ["studios", "classes", "pricing"];
 
@@ -100,7 +101,8 @@ function Navbar({ isNotHomePage }) {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+
+                  <AccountCircleIcon sx={{ color: "white", width: 32, height: 32 }}>M</AccountCircleIcon>
                 </IconButton>
               </Tooltip>
               <Menu

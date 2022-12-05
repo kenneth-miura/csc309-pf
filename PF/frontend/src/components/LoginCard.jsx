@@ -9,7 +9,7 @@ function LoginCard(props) {
   let formNotFilledIn = false;
   let accountNotExist = false;
 
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const cookie = new Cookies();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function LoginCard(props) {
     data.preventDefault();
 
     const formData = new FormData();
-    formData.append("username", email);
+    formData.append("username", username);
     formData.append("password", password);
 
     fetch("http://127.0.0.1:8000/accounts/login/", {
@@ -27,7 +27,7 @@ function LoginCard(props) {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username: email, password: password }),
+      body: JSON.stringify({ username: username, password: password }),
     })
       .then((response) => {
         if (response.status === 400) {
@@ -85,11 +85,11 @@ function LoginCard(props) {
               <Stack>
                 <FormControl style={{ width: "300px" }}>
                   <Input
-                    name="emailAddress"
-                    placeholder="Email Address"
+                    name="username"
+                    placeholder="Username"
                     style={{ padding: "5px" }}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setUsername(e.target.value);
                     }}
                   ></Input>
                 </FormControl>
