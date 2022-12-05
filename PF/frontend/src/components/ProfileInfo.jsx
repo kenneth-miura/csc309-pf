@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
@@ -8,14 +8,13 @@ import { Avatar, Grid } from "@mui/material";
 
 function ProfileInfoCard(props) {
   const cookie = new Cookies();
-//   const accessToken = cookie.get("accessToken");
-  const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcwMjc4NDEyLCJpYXQiOjE2NzAyNzY2MTIsImp0aSI6ImE0NjU5Y2RkM2Q2YzQ2OGViYjNlNTEwZGM4NmYxZTIxIiwidXNlcl9pZCI6Mn0.6B3ZWcefvU1xkPl3GR0r4KBaINvVsogEoY8oR6nZhH0"
+  const accessToken = cookie.get("accessToken");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  function handleOnClick() {
+  useEffect(() => {
 
     fetch("http://127.0.0.1:8000/accounts/info/", {
       method: "GET",
@@ -26,6 +25,7 @@ function ProfileInfoCard(props) {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("I GRABBED DATA ON LOAD")
         console.log(data);
         // navigate("/");
         // console.log(data['access'])
@@ -35,7 +35,7 @@ function ProfileInfoCard(props) {
       .catch((error) => {
         console.log(error);
       });
-  }
+  })
 
   return (
     <div>
@@ -105,7 +105,6 @@ function ProfileInfoCard(props) {
                     EXTRA INFORMATION
                   </p>
                 </Grid>
-                <Button onClick={() => handleOnClick()}> Testing </Button>
               </Grid>
             </Card>
           </div>

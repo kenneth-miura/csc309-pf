@@ -1,11 +1,14 @@
 import React, { useState, useRef } from "react";
-import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
+import { Tab, Card, Box, Button, FormControl, Input, TextField } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
 function LoginCard(props) {
+  let formNotFilledIn = false;
+  let accountNotExist = false;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const cookie = new Cookies();
@@ -13,7 +16,7 @@ function LoginCard(props) {
 
   function handleSubmit(data) {
     data.preventDefault();
-    
+
     const formData = new FormData();
     formData.append("username", email);
     formData.append("password", password);
@@ -21,20 +24,33 @@ function LoginCard(props) {
     fetch("http://127.0.0.1:8000/accounts/login/", {
       method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({username: email, password: password}),
+      body: JSON.stringify({ username: email, password: password }),
     })
-    .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 400) {
+          // TODO: figure out how to do validation lol
+          console.log("Didn't fill in form!");
+          formNotFilledIn = true;
+          throw new Error(response.status);
+        } else if (response.status === 401) {
+          console.log("Account doesn't exist!");
+          accountNotExist = true;
+          throw new Error(response.status);
+        } else {
+          return response.json();
+        }
+      })
       .then((data) => {
-        cookie.set('accessToken', data['access'], {path: '/'})
-        
-        navigate('/');
-        // console.log(data['access'])
+        console.log("Reached cookie setting")
+        cookie.set("accessToken", data["access"], { path: "/" });
+
+        navigate("/");
+
         // console.log(cookie.get('fakeCookie'))
         // console.log(cookie.get('accessToken'));
-        
       })
       .catch((error) => {
         console.log(error);
@@ -43,7 +59,6 @@ function LoginCard(props) {
 
   return (
     <div>
-      
       <div
         style={{
           backgroundColor: "white",
@@ -89,6 +104,8 @@ function LoginCard(props) {
                     }}
                   ></Input>
                 </FormControl>
+                {formNotFilledIn && <p style={{color: "red"}}>Please fill in both</p>}
+                {accountNotExist && <p style={{color: "red"}}>The account does not exist.</p>}
                 <div
                   style={{
                     paddingTop: "20px",
