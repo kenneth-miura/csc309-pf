@@ -2,7 +2,7 @@ import React from 'react';
 import App from './App';
 import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
-import TestSubPage from './pages/TestSubPage'
+import Profile from './pages/Profile'
 
 import {
     createBrowserRouter,
@@ -22,8 +22,8 @@ const router = createBrowserRouter([
         element: <LoginPage></LoginPage>,
     },
     {
-      path: "/login/studio",
-      element: <TestSubPage></TestSubPage>
+      path: "/myaccount",
+      element: <Profile></Profile>
   }
 ]);
 

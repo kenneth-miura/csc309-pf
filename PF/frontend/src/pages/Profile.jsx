@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
-function ErrorPage() {
+function ProfilePage() {
   return (
     <div>
+      <Navbar position="sticky" isNotHomePage={true}></Navbar>
       <Box
-        id="baseBox"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -14,10 +15,10 @@ function ErrorPage() {
           alignItems: "center",
         }}
       >
-      <h1>THIS IS A TEXT</h1>
+        {/* <LoginCard></LoginCard> */}
       </Box>
     </div>
   );
 }
 
-export default ErrorPage;
+export default ProfilePage;

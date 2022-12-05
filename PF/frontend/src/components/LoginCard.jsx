@@ -43,7 +43,7 @@ function LoginCard(props) {
 
   return (
     <div>
-      <Navbar position="sticky" isLoginPage={true}></Navbar>
+      
       <div
         style={{
           backgroundColor: "white",
