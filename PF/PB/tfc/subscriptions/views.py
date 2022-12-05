@@ -15,7 +15,7 @@ def cancel_user_subscription(user):
     subscription = get_object_or_404(Subscription, user=user)
     billing_period_end = subscription.get_billing_period_end()
     to_unenroll = ClassInstance.objects \
-        .filter(userenroll__user__pk=user.id).filter(date__gt=billing_period_end)
+        .filter(userinstanceenroll__user__pk=user.id).filter(date__gt=billing_period_end)
     for class_instance in to_unenroll:
         try:
             class_instance.unenroll_user(user)
@@ -75,6 +75,14 @@ class SubscriptionPlanDetail(APIView):
         data = [{"price": plan.price, "period": plan.get_period_as_string()} for plan in subscription_plan]
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class HasSubscription(APIView):
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+
+        return Response({"has_active_subscription": has_active_subscription(user.pk)})
+
 
 class SubscriptionDetail(APIView):
     """
