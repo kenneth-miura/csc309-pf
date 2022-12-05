@@ -85,6 +85,7 @@ class RetrieveClassScheduleView(APIView):
             return Response(serialized_lst)
 
 
+
 class RetrieveClassHistoryView(APIView):
     """
     Returns a list of ClassInstances that the user with `user_id` has attended in the past.

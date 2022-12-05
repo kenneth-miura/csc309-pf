@@ -87,12 +87,12 @@ class EnrollSingleInstance(APIView):
         class_instance = get_object_or_404(ClassInstance, pk=kwargs['class_id'])
         ret = None
         try:
-            ret = class_instance.enroll_user(user)
+            ret = class_instance.enroll_user(user, enroll_date = class_instance.date)
         except (TargetInPastException):
             return Response({"Message": "Enrollment target is in the past"},
                             status=status.HTTP_400_BAD_REQUEST)
-        except (NotSubscribedException):
-            return Response({"Message": "User is not subscribed"},
+        except NotSubscribedException as e:
+            return Response({"Message": str(e)},
                             status=status.HTTP_403_FORBIDDEN)
         except (CapacityException):
             return Response({"Message": "Class at full capacity"},
