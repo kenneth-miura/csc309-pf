@@ -29,7 +29,7 @@ const router = createBrowserRouter([
   {
     path: "/login/register",
     element: <RegisterForm></RegisterForm>
-}
+  }
 ]);
 
 export default router;

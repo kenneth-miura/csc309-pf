@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import TFCUserSerializer
 from .models import TFCUser
-from classes.models import ClassOffering, UserEnroll, ClassInstance, TimeInterval
+from classes.models import ClassOffering, UserInstanceEnroll, ClassInstance, TimeInterval
 from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from datetime import *
 
@@ -55,7 +55,7 @@ class RetrieveClassScheduleView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        filtered_lst = UserEnroll.objects.filter(user__id=user_id)
+        filtered_lst = UserInstanceEnroll.objects.filter(user__id=user_id)
 
         schedule = list(set([o.class_offering for o in filtered_lst]))
 
@@ -98,7 +98,7 @@ class RetrieveClassHistoryView(APIView):
     def get(self, request, user_id):
         today = datetime.now()
 
-        enroll_objs = UserEnroll.objects.filter(user__id=user_id)
+        enroll_objs = UserInstanceEnroll.objects.filter(user__id=user_id)
 
         filtered_history = []
 

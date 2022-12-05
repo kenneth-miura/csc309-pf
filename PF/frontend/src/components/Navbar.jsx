@@ -1,0 +1,63 @@
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
+import { ReactComponent as MainLogo } from "../images/TFC_main.svg";
+import { Outlet, NavLink } from "react-router-dom";
+
+const pages = ["studios", "classes", "pricing"];
+
+function Navbar({isLoginPage}) {
+  return (
+    <AppBar style={{ backgroundColor: "#d62828" }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <MainLogo style={{ width: "15%" }}></MainLogo>
+          {isLoginPage &&
+          <Button
+            sx={{ my: 2, color: "white", display: "block"}}
+          >
+            <NavLink
+              to={`/`}
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              Home
+            </NavLink>
+          </Button>
+          }
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                <NavLink
+                  to={`/${page}`}
+                  style={{ color: "white", textDecoration: "none" }}
+                >
+                  {page}
+                </NavLink>
+              </Button>
+            ))}
+          </Box>
+          {/* Renders this part only if it's not on the login page. */}
+          {!isLoginPage &&
+          <Button
+            sx={{ my: 2, color: "white", display: "block", right: "40px" }}
+          >
+            <NavLink
+              to={`/login`}
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              Login / Sign Up
+            </NavLink>
+          </Button>
+          }
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
+export default Navbar;

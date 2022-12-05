@@ -11,7 +11,7 @@ class ClassOfferingSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClassOffering
         fields = ["name", "description", "coach", "capacity", "end_recursion_date", "studio",
-                  "studio_id"]
+                  "studio_id", "start_recursion_date"]
 
 class TimeIntervalSerializer(serializers.ModelSerializer):
     class_offering = ClassOfferingSerializer(read_only=True)

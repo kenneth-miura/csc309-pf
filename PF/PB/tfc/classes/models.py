@@ -76,6 +76,7 @@ class ClassOffering(models.Model):
     coach = models.CharField(max_length=200, null=False)
     capacity = models.PositiveIntegerField(null=False)
     end_recursion_date = models.DateField(validators=[end_recursion_only_gte_today])
+    start_recursion_date = models.DateField()
     studio = models.ForeignKey(to=Studio, on_delete=CASCADE)
 
     def delete_future_instances(self):
@@ -86,7 +87,11 @@ class ClassOffering(models.Model):
     def unenroll_user(self, user):
         if not has_active_subscription(user.id):
             raise NotSubscribedException
-        enrolled_classes = []
+
+        offering_enrollment = self.userofferingenrollment_set.filter(user=user)
+        # delete the users enrollment
+        if offering_enrollment.exists():
+            offering_enrollment.delete()
         # future occurrences
         today = datetime.date.today()
         future_class_instances = self.classinstance_set.filter(date__gte=today)
@@ -104,14 +109,19 @@ class ClassOffering(models.Model):
         if not has_active_subscription(user.id):
             raise NotSubscribedException
         enrolled_classes = []
+
+        if not self.userofferingenrollment_set.filter(user=user).exists():
+            UserOfferingEnrollment.objects.create(class_offering=self, user=user)
         # future occurrences
         today = datetime.date.today()
         future_class_instances = self.classinstance_set.filter(date__gte=today)
         for class_instance in future_class_instances:
+            print("trying to enroll in a class instance")
             try:
                 enrolled_class = class_instance.enroll_user(user)
                 enrolled_classes.append(enrolled_class)
-            except Exception:
+            except Exception as e:
+                print(e)
                 # ignore these
                 pass
         return enrolled_classes
@@ -169,13 +179,18 @@ class TimeInterval(models.Model):
         offering = self.class_offering
         end_recursion_date = offering.end_recursion_date
         next_class_date = get_next_weekday(start_date, self.day)
-        class_instances = []
+
+        users_enrolled = [user_offering_enroll.user for user_offering_enroll in offering.userofferingenrollment_set.all()]
         while next_class_date <= end_recursion_date:
             class_instance = ClassInstance(date=next_class_date, class_offering=offering,
                                            time_interval=self)
-            class_instances.append(class_instance)
+
+            class_instance.save()
+            for user in users_enrolled:
+                class_instance.enroll_user(user)
             next_class_date += rd.relativedelta(days=7)
-        ClassInstance.objects.bulk_create(class_instances)
+        # can't use bulk create b/c I need the pks, which it doesn't support
+
 
     def clear_class_instances(self):
         self.classinstance_set.all().delete()
@@ -204,7 +219,7 @@ class ClassInstance(models.Model):
         return f"pk: {self.pk}, date: {self.date}, capacity: {self.capacity_count}"
 
     def user_enrolled(self, user):
-        return self.userenroll_set.filter(user=user).exists()
+        return self.userinstanceenroll_set.filter(user=user).exists()
 
     def unenroll_user(self, user):
         if self.date <= datetime.date.today():
@@ -216,7 +231,7 @@ class ClassInstance(models.Model):
         if self.capacity_count == 0:
             raise CapacityException
         self.capacity_count -= 1
-        user_enrollment = get_object_or_404(UserEnroll, class_instance=self, user=user)
+        user_enrollment = get_object_or_404(UserInstanceEnroll, class_instance=self, user=user)
         user_enrollment.delete()
         self.save()
 
@@ -232,7 +247,7 @@ class ClassInstance(models.Model):
         if self.user_enrolled(user):
             raise EnrollmentException
         self.capacity_count += 1
-        user_enroll = UserEnroll.objects.create(class_instance=self,
+        user_enroll = UserInstanceEnroll.objects.create(class_instance=self,
                                                 class_offering=self.class_offering, user=user)
         user_enroll.save()
         self.save()
@@ -240,7 +255,7 @@ class ClassInstance(models.Model):
         return self
 
 
-class UserEnroll(models.Model):
+class UserInstanceEnroll(models.Model):
     class_instance = models.ForeignKey(to=ClassInstance, on_delete=CASCADE)
     class_offering = models.ForeignKey(to=ClassOffering, on_delete=CASCADE)
     user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
@@ -257,3 +272,9 @@ class UserEnroll(models.Model):
         self.class_instance.capacity -= 1
         self.class_instance.save()
         self.delete()
+
+class UserOfferingEnrollment(models.Model):
+    class_offering = models.ForeignKey(to=ClassOffering, on_delete=CASCADE)
+    user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
+    # This
+    pass
