@@ -3,15 +3,17 @@ import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
 import Cookies from 'universal-cookie';
+import { useNavigate } from "react-router-dom";
 
 function LoginCard(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const cookie = new Cookies();
+  const navigate = useNavigate();
 
   function handleSubmit(data) {
     data.preventDefault();
-    const cookie = new Cookies();
-
+    
     const formData = new FormData();
     formData.append("username", email);
     formData.append("password", password);
@@ -27,9 +29,12 @@ function LoginCard(props) {
     .then((response) => response.json())
       .then((data) => {
         cookie.set('accessToken', data['access'], {path: '/'})
-
-        console.log(data['access'])
-        console.log(cookie.get('accessToken'));
+        
+        navigate('/');
+        // console.log(data['access'])
+        // console.log(cookie.get('fakeCookie'))
+        // console.log(cookie.get('accessToken'));
+        
       })
       .catch((error) => {
         console.log(error);
