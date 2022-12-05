@@ -76,6 +76,7 @@ class ClassOffering(models.Model):
     coach = models.CharField(max_length=200, null=False)
     capacity = models.PositiveIntegerField(null=False)
     end_recursion_date = models.DateField(validators=[end_recursion_only_gte_today])
+    start_recursion_date = models.DateField()
     studio = models.ForeignKey(to=Studio, on_delete=CASCADE)
 
     def delete_future_instances(self):
@@ -86,7 +87,6 @@ class ClassOffering(models.Model):
     def unenroll_user(self, user):
         if not has_active_subscription(user.id):
             raise NotSubscribedException
-        enrolled_classes = []
 
         offering_enrollment = self.userofferingenrollment_set.filter(user=user)
         # delete the users enrollment
