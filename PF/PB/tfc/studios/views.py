@@ -66,7 +66,7 @@ class StudioListView(APIView, LimitOffsetPagination):
 
     def get(self, request):
         studio_list = Studio.objects.all()
-        user_location = (request.GET['latitude'], request.GET['longitude'])
+        user_location = (request.query_params['latitude'], request.query_params['longitude'])
 
         studio_to_distance = []
 
@@ -88,7 +88,7 @@ class StudioListView(APIView, LimitOffsetPagination):
 
         # print(studios)
 
-        pg = request.GET.get("page")
+        pg = request.query_params["page"]
 
         if pg is not None:
             page_num = int(pg)
@@ -105,7 +105,7 @@ class StudioListFilterClassInstanceView(APIView):
     serializer_class = ClassInstanceSerializer
 
     def get(self, request):
-        raw_filters = request.GET
+        raw_filters = request.query_params
         filters = {}
         for k in raw_filters:
             if k == "studio":
@@ -160,7 +160,7 @@ class StudioListFilterView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        raw_filters = request.GET
+        raw_filters = request.query_params
 
         filters = {}
 
@@ -223,7 +223,7 @@ class StudioListFilterClassesView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, studio_id):
-        raw_filters = request.GET
+        raw_filters = request.query_params
 
         filters = {"studio": studio_id}
 
@@ -302,7 +302,7 @@ class StudioClassListView(APIView, LimitOffsetPagination):
 
     def get(self, request, studio_id):
         class_offerings = get_list_or_404(ClassOffering, studio_id=studio_id)
-        pg = request.GET.get("page")
+        pg = request.query_params["page"]
         offerings_to_instances = []
 
         for c in class_offerings:
