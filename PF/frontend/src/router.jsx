@@ -4,6 +4,7 @@ import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
 import Profile from './pages/Profile'
 import EditProfilePage from './pages/EditProfile';
+import EditAvatarPage from './pages/EditAvatar';
 
 import {
     createBrowserRouter,
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
     {
       path: "/myaccount/edit",
       element: <EditProfilePage></EditProfilePage>
+    },
+    {
+      path: "/myaccount/avatar",
+      element: <EditAvatarPage></EditAvatarPage>
     }
 ]);
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
+import { Tab, Card, Box, Button, FormControl, Input, InputLabel, Stack } from "@mui/material";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Grid } from "@mui/material";
@@ -18,7 +18,7 @@ function ProfileInfoCard(props) {
 
   const navigate = useNavigate();
 
-  function handleClick() {
+  function handleEditProfileClick() {
     navigate("/myaccount/edit");
   }
 
@@ -79,23 +79,35 @@ function ProfileInfoCard(props) {
               style={{
                 backgroundColor: "white",
                 width: "50%",
-                height: "250px",
+                height: "300px",
               }}
             >
               <Grid container spacing={2}>
                 <Grid>
+                  <Stack>
                   <Avatar
                     sx={{
                       width: "100px",
                       height: "100px",
                       marginTop: "50px",
-                      marginLeft: "50px",
+                      marginLeft: "80px",
                     }}
                     alt={firstName}
                     src={avatar}
                   ></Avatar>
                   <Button
-                    onClick={handleClick}
+                    onClick={handleEditProfileClick}
+                    variant="secondary"
+                    style={{
+                      color: "#d62828",
+                      marginLeft: "50px",
+                      marginTop: "50px"
+                    }}
+                  >
+                    Edit Profile
+                  </Button>
+                  <Button
+                    onClick={() => {navigate("/myaccount/avatar")}}
                     variant="secondary"
                     style={{
                       color: "#d62828",
@@ -103,8 +115,9 @@ function ProfileInfoCard(props) {
                       marginTop: "20px"
                     }}
                   >
-                    Edit Profile
+                    Upload Avatar
                   </Button>
+                  </Stack>
                 </Grid>
                 <Grid>
                   <h2

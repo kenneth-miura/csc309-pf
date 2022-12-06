@@ -170,8 +170,6 @@ function ProfileEditCard(props) {
                     }}
                   ></Input>
                 </FormControl>
-                <InputLabel style={{paddingTop: "20px"}} htmlFor="avatar">Avatar</InputLabel>
-                <Input type="file" id="avatar" name="avatar" style={{paddingTop: "10px"}} onChange={(e) => {formData.append("avatar", e.target.files[0]); console.log(formData);}}></Input>
                 <div
                   style={{
                     paddingTop: "30px",
