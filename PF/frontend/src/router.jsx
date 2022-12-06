@@ -3,6 +3,7 @@ import App from './App';
 import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
 import TestSubPage from './pages/TestSubPage'
+import ClassScheduler from './pages/ClassScheduler';
 
 import {
     createBrowserRouter,
@@ -24,7 +25,11 @@ const router = createBrowserRouter([
     {
       path: "/login/studio",
       element: <TestSubPage></TestSubPage>
-  }
+  },
+    {
+      path: "/classes",
+      element: <ClassScheduler></ClassScheduler>
+    }
 ]);
 
 export default router;
