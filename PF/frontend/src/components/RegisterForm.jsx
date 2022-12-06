@@ -5,7 +5,6 @@ import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
-
 function RegisterForm(props) {
   const [username, setUsername] = useState("");
   const [firstname, setFirstName] = useState("");
@@ -16,18 +15,27 @@ function RegisterForm(props) {
   const [avatar, setAvatar] = useState("");
   const [phonenumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
-
+  
+  let formError = false;
+  
   function handelRegister(data){
     data.preventDefault();
+
     const formData = new FormData();
     formData.append("username", username);
     formData.append("firstname", firstname);
     formData.append("lastname", lastname);
     formData.append("email", email);
-    formData.append("password1", password1);
-    formData.append("password2", password2);
+    if (password1.value == password2.value){
+      formData.append("password1", password1);
+      formData.append("password2", password2);
+    }
+    else{
+      password1 = null;
+    }
     formData.append("phonenumber", phonenumber);
     formData.append("avatar", avatar);
+    
     fetch("http://127.0.0.1:8000/register/", {
       method: "POST",
       headers: {
@@ -36,7 +44,17 @@ function RegisterForm(props) {
       },
       body: JSON.stringify({usernam: username, first_name: firstname, last_name: lastname,
       email: email, password: password1, phone_number: phonenumber, avatar: avatar})
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status === 400){
+          console.log("Error in form!");
+          formError = true;
+          throw new Error(response.status);
+        }
+        else{
+          return response.json();
+        }
+      })
+      .then((data) => navigate("/login"))
       .catch((error) => {
         console.log(error);
       })
@@ -66,7 +84,7 @@ function RegisterForm(props) {
           <form onsubmit={handelRegister}>
             <FormControl style={{ width: "300px" }}>
               <Input
-                  id="Username"
+                  name="username"
                   placeholder="Username"
                   style={{ padding: "5px" }}
                   onChange={(e) => {
@@ -78,7 +96,7 @@ function RegisterForm(props) {
                 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="FirstName"
+                  name="firstname"
                   placeholder="First Name"
                   style={{ padding: "5px" }}
                   onChange={(e) => {
@@ -90,7 +108,7 @@ function RegisterForm(props) {
                 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="Last Name"
+                  name="lastname"
                   placeholder="Last Name"
                   style={{ paddingTop: "10px" }}
                   onChange={(e) => {
@@ -102,7 +120,7 @@ function RegisterForm(props) {
 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="Email"
+                  name="email"
                   placeholder="Email"
                   style={{ paddingTop: "10px" }}
                   onChange={(e) => {
@@ -114,7 +132,7 @@ function RegisterForm(props) {
 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="Password1"
+                  name="password1"
                   placeholder="Password"
                   style={{ paddingTop: "10px" }}
                   onChange={(e) => {
@@ -126,7 +144,7 @@ function RegisterForm(props) {
                 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="Password2"
+                  name="password2"
                   placeholder="Confirm Password"
                   style={{ paddingTop: "10px" }}
                   onChange={(e) => {
@@ -138,7 +156,7 @@ function RegisterForm(props) {
                 
                 <FormControl style={{ width: "300px" }}>
                 <Input
-                  id="Phone Number"
+                  name="phonenumber"
                   placeholder="Phone Number"
                   style={{ paddingTop: "10px" }}
                   onChange={(e) => {
@@ -156,6 +174,10 @@ function RegisterForm(props) {
                 <label>Avatar</label>
                 
             </FormControl>
+            {formError && <p style={{color: "red"}}>Please complete the form or check the password</p>}
+            <Button type="submit" variant="contained" style={{ backgroundColor: "#d62828" }}> 
+             Register  
+            </Button>
           </form>
         </div>
         <div
@@ -165,18 +187,10 @@ function RegisterForm(props) {
             justifyContent: "center",
           }}
         >
-          <Button variant="contained" style={{ backgroundColor: "#d62828" }}> 
-          <NavLink
-              to={`/login`}
-              style={{ color: "white", textDecoration: "none" }}
-            >
-              Register  
-            </NavLink>
-                      
-          </Button>
+          
           
         </div>
-        <hr style={{color: "#d62828", width: "300px", marginTop: "40px"}}></hr>
+        
       </Card>
     </div>
     </div>
