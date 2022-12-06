@@ -78,7 +78,8 @@ function Navbar({ isNotHomePage }) {
             ))}
           </Box>
           {/* Renders this part only if it's not on the login page. */}
-          {(!!!isNotHomePage && !!!isAuth) && (
+          {/* I removed !!!isNotHomePage because we want login/signup button to show up everywhere */}
+          {!!!isAuth && (
             <Button
               sx={{ my: 2, color: "white", display: "block", right: "40px" }}
             >

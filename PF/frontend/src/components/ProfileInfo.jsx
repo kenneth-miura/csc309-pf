@@ -47,7 +47,7 @@ function ProfileInfoCard(props) {
       .catch((error) => {
         console.log(error);
       });
-  });
+  }, [accessToken]);
 
   return (
     <div>
