@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
-import Home from "@mui/icons-material/Home";
 
 function HomePage() {
   return (

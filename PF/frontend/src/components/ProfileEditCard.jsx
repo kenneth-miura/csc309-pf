@@ -25,7 +25,6 @@ function ProfileEditCard(props) {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [avatar, setAvatar] = useState("");
   const [phoneNum, setPhoneNum] = useState("");
 
   const cookie = new Cookies();
@@ -38,15 +37,35 @@ function ProfileEditCard(props) {
   function handleSubmit(data) {
     data.preventDefault();
 
+    if (!!username) {
+        formData.append("username", username);
+    }
 
-    // formData.append("username", "elonmusk1");
-    // formData.append("password", password1);
+    if (!!password1) {
+        formData.append("password", password1);
+    }
+    
+    if (!!email) {
+        formData.append("email", email);
+    }
+
+    if (!!firstName) {
+        formData.append("first_name", firstName);
+    }
+
+    if (!!lastName) {
+        formData.append("last_name", lastName);
+    }
+
+    if (!!phoneNum) {
+        formData.append("phone_number", phoneNum);
+    }
 
     fetch("http://127.0.0.1:8000/accounts/update/", {
       method: "PATCH",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         Authorization: "Bearer " + accessToken,
       },
       body: formData, // JSON.stringify({avatar: avatar}),
