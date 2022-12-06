@@ -5,6 +5,7 @@ import LoginPage from './pages/Login';
 import TestSubPage from './pages/TestSubPage'
 import RegisterForm from './pages/Register'
 
+
 import {
     createBrowserRouter,
     createRoutesFromElements,
@@ -27,9 +28,9 @@ const router = createBrowserRouter([
       element: <TestSubPage></TestSubPage>
   },
   {
-    path: "/login/register",
+    path: "/register",
     element: <RegisterForm></RegisterForm>
-  }
+}
 ]);
 
 export default router;
