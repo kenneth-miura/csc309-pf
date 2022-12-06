@@ -298,7 +298,7 @@ class StudioMapsDirectionsView(APIView):
 
         link_base = link_base + str(studio_lat) + "," + str(studio_long)
 
-        return Response(link_base)
+        return Response({"map_link": link_base})
 
 
 class StudioClassListView(APIView, LimitOffsetPagination):

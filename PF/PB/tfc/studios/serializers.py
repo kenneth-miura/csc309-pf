@@ -5,7 +5,7 @@ from .models import Studio, StudioImage, StudioAmenities
 class StudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Studio
-        fields = ['name', 'address', 'postal_code', 'phone_num', 'longitude', 'latitude']
+        fields = ['id', 'name', 'address', 'postal_code', 'phone_num', 'longitude', 'latitude']
 
 
 class StudioImageSerializer(serializers.ModelSerializer):

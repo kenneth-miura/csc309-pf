@@ -18,6 +18,79 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import TablePagination from "@mui/material/TablePagination";
 import { Stack } from "@mui/system";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import IconButton from "@mui/material/IconButton";
+import LaunchIcon from "@mui/icons-material/Launch";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import CloseIcon from "@mui/icons-material/Close";
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialogContent-root": {
+    padding: theme.spacing(2),
+  },
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
+  },
+}));
+
+function BootstrapDialogTitle(props) {
+  const { children, onClose, ...other } = props;
+
+  return (
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+      {children}
+      {onClose ? (
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </DialogTitle>
+  );
+}
+
+BootstrapDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -32,7 +105,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography component={'span'}>{children}</Typography>
+          <Typography component={"span"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -72,14 +145,31 @@ function StudioPage() {
   const [classOfferingName, setClassOfferingName] = useState("");
   const [coachName, setCoachName] = useState("");
   const [amenities, setAmenities] = useState("");
+  const [currItem, setCurrItem] = useState(null);
+  const [googleDirection, setGoogleDirection] = useState("");
 
-  const fetchData = (curPage, name, class_offering_name, coach_name, amenity_lst) => {
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (info) => {
+    setOpen(true);
+    setCurrItem(info);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-    let serverUrl = "http://127.0.0.1:8000/studios/list/filter/?page=" + curPage;
+  const fetchData = (
+    curPage,
+    name,
+    class_offering_name,
+    coach_name,
+    amenity_lst
+  ) => {
+    let serverUrl =
+      "http://127.0.0.1:8000/studios/list/filter/?page=" + curPage;
 
     if (!!name) {
-      serverUrl = serverUrl + "&name=" + name
-      console.log(serverUrl)
+      serverUrl = serverUrl + "&name=" + name;
+      console.log(serverUrl);
     }
 
     if (!!class_offering_name) {
@@ -89,7 +179,7 @@ function StudioPage() {
       serverUrl = serverUrl + "&coach_name=" + coach_name;
     }
 
-    if (!!amenity_lst){
+    if (!!amenity_lst) {
       serverUrl = serverUrl + "&amenities=" + amenity_lst;
     }
 
@@ -109,26 +199,55 @@ function StudioPage() {
         }
       })
       .then((data) => {
-        console.log("Received data")
-        console.log(data)
+        console.log("Received data");
+        console.log(data);
 
+        setItemList(data.items);
+        setTotalCount(data.total_count);
+        setCurrPage(curPage);
       })
       .catch((error) => {
         // console.log(error);
       });
+  };
+
+  const handleSubmit1 = () => {
+    fetchData(currPage, studioName, classOfferingName, coachName, amenities);
+  };
+
+  const handleGetDirections = (id) => {
+
+    let serverUrl = `http://127.0.0.1:8000/studios/${id}/directions/`
+
+    fetch(serverUrl, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.status === 400) {
+          // TODO: figure out how to do validation lol
+          console.log("Didn't fill in form!");
+          throw new Error(response.status);
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        setGoogleDirection(data.map_link)
+        window.open(data.map_link);
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
+    
   }
 
 
-  const handleSubmit1 = () => {
-    console.log("??????????????")
-    fetchData(currPage, studioName, classOfferingName, coachName, amenities);
-
-
-  };
-
   return (
     <div>
-      <Navbar position="sticky" isNotHomePage={true}></Navbar>(
+      <Navbar position="sticky" isNotHomePage={true}></Navbar>
       <div>
         <Box
           style={{
@@ -163,82 +282,147 @@ function StudioPage() {
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
-              <Stack>
-                <FormControl style={{ width: "300px" }}>
-                  <Input
-                    name="name"
-                    placeholder="Studio Name"
-                    style={{ padding: "5px" }}
-                    onChange={(e) => {
-                      setStudioName(e.target.value);
-                    }}
-                  ></Input>
-                </FormControl>
-                <FormControl style={{ width: "300px" }}>
-                  <Input
-                    name="classOffering"
-                    placeholder="Class Offering Name"
-                    style={{ paddingTop: "10px" }}
-                    onChange={(e) => {
-                      setClassOfferingName(e.target.value);
-                    }}
-                  ></Input>
-                </FormControl>
-                <FormControl style={{ width: "300px" }}>
-                  <Input
-                    name="coach"
-                    placeholder="Coach Name"
-                    style={{ paddingTop: "10px" }}
-                    onChange={(e) => {
-                      setCoachName(e.target.value);
-                    }}
-                  ></Input>
-                </FormControl>
-                <FormControl style={{ width: "300px", paddingTop: "20px" }}>
-                  <InputLabel
-                    variant="filled"
-                    style={{ paddingTop: "30px" }}
-                    shrink
-                    size="small"
-                    disableAnimation
-                    htmlFor="amenities"
-                  >
-                    Add commas between each element
-                  </InputLabel>
-                  <Input
-                    name="amenities"
-                    placeholder="Amenities (e.g. Pool, Shower)"
-                    style={{ paddingTop: "10px" }}
-                    onChange={(e) => {
-                      const am_lst = e.target.value;
-                      setAmenities(e.target.value);
-                    }}
-                  ></Input>
-                </FormControl>
-                <div
-                  style={{
-                    paddingTop: "20px",
-                    display: "flex",
-                    justifyContent: "center",
+            <Stack>
+              <FormControl style={{ width: "300px" }}>
+                <Input
+                  name="name"
+                  placeholder="Studio Name"
+                  style={{ padding: "5px" }}
+                  onChange={(e) => {
+                    setStudioName(e.target.value);
                   }}
+                ></Input>
+              </FormControl>
+              <FormControl style={{ width: "300px" }}>
+                <Input
+                  name="classOffering"
+                  placeholder="Class Offering Name"
+                  style={{ paddingTop: "10px" }}
+                  onChange={(e) => {
+                    setClassOfferingName(e.target.value);
+                  }}
+                ></Input>
+              </FormControl>
+              <FormControl style={{ width: "300px" }}>
+                <Input
+                  name="coach"
+                  placeholder="Coach Name"
+                  style={{ paddingTop: "10px" }}
+                  onChange={(e) => {
+                    setCoachName(e.target.value);
+                  }}
+                ></Input>
+              </FormControl>
+              <FormControl style={{ width: "300px", paddingTop: "20px" }}>
+                <InputLabel
+                  variant="filled"
+                  style={{ paddingTop: "30px" }}
+                  shrink
+                  size="small"
+                  disableAnimation
+                  htmlFor="amenities"
                 >
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    style={{ backgroundColor: "#d62828" }}
-                    onClick={handleSubmit1}
-                  >
-                    Filter
-                  </Button>
-                </div>
-              </Stack>
+                  Add commas between each element
+                </InputLabel>
+                <Input
+                  name="amenities"
+                  placeholder="Amenities (e.g. Pool, Shower)"
+                  style={{ paddingTop: "10px" }}
+                  onChange={(e) => {
+                    const am_lst = e.target.value;
+                    setAmenities(e.target.value);
+                  }}
+                ></Input>
+              </FormControl>
+              <div
+                style={{
+                  paddingTop: "20px",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  type="submit"
+                  variant="contained"
+                  style={{ backgroundColor: "#d62828" }}
+                  onClick={handleSubmit1}
+                >
+                  Filter
+                </Button>
+              </div>
+            </Stack>
+
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Studio Name</StyledTableCell>
+                    <StyledTableCell align="right">Address</StyledTableCell>
+                    <StyledTableCell align="right">
+                      Phone Number
+                    </StyledTableCell>
+                    <StyledTableCell align="right">More Info</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {itemList.map((info) => (
+                    <StyledTableRow key={info.name}>
+                      <StyledTableCell component="th" scope="row">
+                        {info.name}
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        {info.address}
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        {info.phone_num}
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        <IconButton
+                          color="primary"
+                          aria-label="upload picture"
+                          component="label"
+                          onClick={() => {handleClickOpen(info)}}
+                        >
+                          <LaunchIcon />
+                        </IconButton>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <BootstrapDialog
+              fullWidth={true}
+              onClose={handleClose}
+              aria-labelledby="customized-dialog-title"
+              open={open}
+            >
+              <BootstrapDialogTitle
+                id="customized-dialog-title"
+                onClose={handleClose}
+              >
+                {!!currItem && <Typography>{currItem.name}</Typography>}
+              </BootstrapDialogTitle>
+              <DialogContent dividers>
+                <Typography component={"span"} gutterBottom>
+                 Address: {!!currItem && <Typography>{currItem.address}</Typography>}
+                </Typography>
+                <Typography component={"span"}  gutterBottom>
+                  Phone Number: {!!currItem && <Typography>{currItem.phone_num}</Typography>}
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button autoFocus onClick={() => {handleGetDirections(currItem.id)}}>
+                  Get Directions
+                </Button>
+              </DialogActions>
+            </BootstrapDialog>
           </TabPanel>
           <TabPanel value={value} index={1}>
             <StudioMap></StudioMap>
           </TabPanel>
         </Box>
       </div>
-      )
     </div>
   );
 }
