@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,6 +23,19 @@ class CreateUserView(CreateAPIView):
         `username`, `password`, `email`, `first_name`, `last_name`, `phone_number`, `avatar` - an Image
     """
     serializer_class = TFCUserSerializer
+
+
+class RetrieveUserView(RetrieveAPIView):
+    """
+    Retrieves a studio with the id `studio_id`.
+    """
+    serializer_class = TFCUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        user_id = self.request.user.id
+
+        return get_object_or_404(TFCUser, id=user_id)
 
 
 # Use PUT when you are updating *all* fields of the user profile.
