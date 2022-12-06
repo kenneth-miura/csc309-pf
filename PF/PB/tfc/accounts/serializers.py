@@ -53,4 +53,8 @@ class TFCUserSerializer(serializers.ModelSerializer):
             instance.set_password(validated_data['password'])
             instance.save()
 
+        if 'avatar' in keys:
+            instance.avatar = validated_data['avatar']
+            instance.save()
+
         return instance
