@@ -103,10 +103,12 @@ class StudioListView(APIView, LimitOffsetPagination):
 class StudioListFilterClassInstanceView(APIView):
     serializer_class = ClassInstanceSerializer
 
-    def get(self, request, studio_id):
+    def get(self, request):
         raw_filters = request.data
-        filters = {"class_offering__studio": studio_id}
+        filters = {}
         for k in raw_filters:
+            if k == "studio":
+                filters["class_offering__studio__name"] = raw_filters[k]
             if k == "class_name":
                 filters["class_offering__name"] = raw_filters[k]
 
