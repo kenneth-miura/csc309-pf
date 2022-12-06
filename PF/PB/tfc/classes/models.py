@@ -9,7 +9,7 @@ import dateutil.relativedelta as rd
 import calendar
 from .exceptions import EnrollmentException, CapacityException, NotSubscribedException, \
     TargetInPastException
-from subscriptions.models import has_active_subscription
+from subscriptions.models import has_active_subscription, will_have_active_subscription
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 
@@ -297,7 +297,9 @@ class ClassInstance(models.Model):
             raise TargetInPastException
         # check for subscription
         if not has_active_subscription(user.id):
-            raise NotSubscribedException
+            raise NotSubscribedException("User is not subscribed right now")
+        if not will_have_active_subscription(user.id, date=self.date):
+            raise NotSubscribedException(f"User will not have active subscription by {enroll_date}" )
         if self.capacity_count == self.class_offering.capacity:
             raise CapacityException
         if self.user_enrolled(user):
