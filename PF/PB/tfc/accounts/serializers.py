@@ -16,6 +16,7 @@ class TFCUserSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
+            password=validated_data['password'],
             email=validated_data['email'],
             phone_number=validated_data['phone_number'],
             avatar=validated_data['avatar'],
@@ -24,3 +25,9 @@ class TFCUserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+
+        return instance
