@@ -16,7 +16,7 @@ from datetime import *
 """
     STUDIO
 
-    Below are views that deal with creating, retrieving, editing/updating and deleting studio objects. 
+    Below are views that deal with creating, retrieving, editing/updating and deleting studio objects.
 """
 
 
@@ -99,6 +99,43 @@ class StudioListView(APIView, LimitOffsetPagination):
         else:
             # Defaults to returning the whole list of studios if no page is given.
             return Response(studios)
+
+class StudioListFilterClassInstanceView(APIView):
+    serializer_class = ClassInstanceSerializer
+
+    def get(self, request, studio_id):
+        raw_filters = request.data
+        filters = {"class_offering__studio": studio_id}
+        for k in raw_filters:
+            if k == "class_name":
+                filters["class_offering__name"] = raw_filters[k]
+
+            if k == "coach_name":
+                filters["class_offering__coach"] = raw_filters[k]
+
+            if k == "date":
+                filters["date"] = datetime.strptime(raw_filters[k], '%Y-%m-%d').date()
+
+            if k == "start_time":
+                formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
+
+                filters["time_interval__start_time"] = formatted_time
+
+            if k == "end_time":
+                formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
+
+                filters["time_interval__end_time"] = formatted_time
+        print(filters)
+        filtered_list = ClassInstance.objects.filter(**filters)
+        serialized_classes = [ClassInstanceSerializer(i).data for i in filtered_list]
+        page_class_lst = Paginator(serialized_classes, 10)
+        pg = request.GET.get("page")
+
+        if pg is not None:
+            page_num = int(pg)
+            return Response(page_class_lst.get_page(page_num).object_list)
+        else:
+            return Response(serialized_classes)
 
 
 class StudioListFilterView(APIView):
@@ -314,7 +351,7 @@ class StudioClassListView(APIView, LimitOffsetPagination):
 """
     STUDIO IMAGES
 
-    Below are views that deal with creating, retrieving and editing images associated with a studio. 
+    Below are views that deal with creating, retrieving and editing images associated with a studio.
 """
 
 
@@ -342,8 +379,8 @@ class RetrieveStudioImageView(ListAPIView, LimitOffsetPagination):
 
 """
     AMENITIES
-    
-    Below are views that deal with creating, retrieving and editing amenities. 
+
+    Below are views that deal with creating, retrieving and editing amenities.
 """
 
 
