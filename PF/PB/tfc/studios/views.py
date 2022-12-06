@@ -12,6 +12,7 @@ from classes.models import ClassOffering, ClassInstance, TimeInterval
 from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from django.db.models import Q
 from datetime import *
+import re
 
 """
     STUDIO
@@ -160,15 +161,19 @@ class StudioListFilterView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        raw_filters = request.data
+        raw_filters = request.query_params
+        print(raw_filters)
 
         filters = {}
+
+        raw_amenities = ""
 
         amen_lst = []
 
         for k in raw_filters:
             if k == "name":
                 filters["name"] = raw_filters[k]
+                print(filters)
 
             if k == "class_offering_name":
                 filters["classoffering__name"] = raw_filters[k]
@@ -177,14 +182,23 @@ class StudioListFilterView(APIView):
                 filters["classoffering__coach"] = raw_filters[k]
 
             if k == "amenities":
-                amen_lst = raw_filters[k]
+                raw_amenities = raw_filters[k]
 
         filtered_lst = Studio.objects.filter(**filters)
+
+        amen_lst_raw = raw_amenities.split(", ")
+
+        if len(amen_lst_raw) == 0:
+            amen_lst = [a.strip(",") for a in amen_lst_raw]
 
         if amen_lst:
             for x in amen_lst:
                 filtered_lst = filtered_lst.filter(Q(amenities__name=x)).distinct()
                 # Keep on filtering based on the amenities
+
+        print()
+
+        total_count = len(filtered_lst)
 
         serialized_lst = [StudioSerializer(i).data for i in filtered_lst]
 
@@ -197,7 +211,7 @@ class StudioListFilterView(APIView):
 
             # If you have only 2 pages, but the query param sends in page=3,
             # it will just return the last page (page 2)
-            return Response(page_studio_lst.get_page(page_num).object_list)
+            return Response({'total_count': total_count, 'items': page_studio_lst.get_page(page_num).object_list})
         else:
             # Defaults to returning the whole list of studios if no page is given.
             return Response(serialized_lst)

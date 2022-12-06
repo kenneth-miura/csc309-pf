@@ -113,7 +113,7 @@ export default function StudioMap() {
   };
 
   return isLoaded ? (
-    <div style={{ paddingTop: "100px" }}>
+    <div>
       <InputLabel htmlFor="postal">Enter your postal code: </InputLabel>
       <TextField
         name="postal"
