@@ -20,6 +20,7 @@ from datetime import *
 """
 
 
+
 class CreateStudioView(CreateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class = StudioSerializer
@@ -65,7 +66,7 @@ class StudioListView(APIView, LimitOffsetPagination):
 
     def get(self, request):
         studio_list = Studio.objects.all()
-        user_location = (request.data['latitude'], request.data['longitude'])
+        user_location = (request.GET['latitude'], request.GET['longitude'])
 
         studio_to_distance = []
 
@@ -104,7 +105,7 @@ class StudioListFilterClassInstanceView(APIView):
     serializer_class = ClassInstanceSerializer
 
     def get(self, request):
-        raw_filters = request.data
+        raw_filters = request.GET
         filters = {}
         for k in raw_filters:
             if k == "studio":
@@ -159,7 +160,7 @@ class StudioListFilterView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        raw_filters = request.data
+        raw_filters = request.GET
 
         filters = {}
 
@@ -222,7 +223,7 @@ class StudioListFilterClassesView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, studio_id):
-        raw_filters = request.data
+        raw_filters = request.GET
 
         filters = {"studio": studio_id}
 
