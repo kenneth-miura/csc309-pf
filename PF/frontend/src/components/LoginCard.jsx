@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 import Navbar from "./Navbar";
+import { NavLink } from "react-router-dom";
 
 
 function LoginCard(props) {
@@ -67,9 +68,16 @@ function LoginCard(props) {
             justifyContent: "center",
           }}
         >
-          <Button variant="primary" style={{ color: "#d62828" }}>
-            Register
-          </Button>
+          <Button variant="contained" style={{ backgroundColor: "#d62828" }}>
+            <NavLink
+              to={`/register`}
+              style={{ color: "white", textDecoration: "none" }}
+            >
+              Register
+            </NavLink>
+              
+            </Button>
+            
         </div>
       </Card>
     </div>
