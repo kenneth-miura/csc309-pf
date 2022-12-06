@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
-import Navbar from "./Navbar";
-import { Stack } from "@mui/system";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Grid } from "@mui/material";
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 
 function ProfileInfoCard(props) {
   const cookie = new Cookies();
@@ -20,6 +17,10 @@ function ProfileInfoCard(props) {
   const [phoneNum, setPhoneNum] = useState("");
 
   const navigate = useNavigate();
+
+  function handleClick() {
+      navigate("/myaccount/edit")
+  }
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/accounts/info/", {
@@ -134,6 +135,19 @@ function ProfileInfoCard(props) {
                   >
                     {phoneNum}
                   </p>
+                </Grid>
+                <Grid>
+                  <Button
+                    onClick={handleClick}
+                    variant="secondary"
+                    style={{
+                      color: "#d62828",
+                      marginTop: "50px",
+                      marginLeft: "220px",
+                    }}
+                  >
+                    Edit Profile
+                  </Button>
                 </Grid>
               </Grid>
             </Card>

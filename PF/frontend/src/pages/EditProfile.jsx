@@ -2,12 +2,13 @@ import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import ProfileInfoCard from "../components/ProfileInfo";
+import ProfileEditCard from "../components/ProfileEditCard";
 import Cookies from "universal-cookie";
 import ErrorPage from './Error'
 import { redirect, useNavigate } from "react-router-dom";
 
-function ProfilePage() {
+
+function EditProfilePage() {
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
 
@@ -16,7 +17,7 @@ function ProfilePage() {
 
   return (
     <div>
-      <Navbar position="sticky" isNotHomePage={true}></Navbar>
+        <Navbar position="sticky" isNotHomePage={true}></Navbar>
       {isAuth && <div>
       <Box
         style={{
@@ -26,7 +27,7 @@ function ProfilePage() {
           alignItems: "center",
         }}
       >
-        <ProfileInfoCard></ProfileInfoCard>
+        <ProfileEditCard></ProfileEditCard>
         
       </Box></div>}
 
@@ -37,4 +38,4 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
+export default EditProfilePage;
