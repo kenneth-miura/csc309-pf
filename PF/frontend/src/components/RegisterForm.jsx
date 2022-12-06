@@ -180,17 +180,6 @@ function RegisterForm(props) {
             </Button>
           </form>
         </div>
-        <div
-          style={{
-            paddingTop: "20px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          
-          
-        </div>
-        
       </Card>
     </div>
     </div>
