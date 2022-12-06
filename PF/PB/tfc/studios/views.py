@@ -64,8 +64,11 @@ class StudioListView(APIView, LimitOffsetPagination):
     pagination_class = LimitOffsetPagination
 
     def get(self, request):
+        lat = request.GET.get('lat')
+        long = request.GET.get('long')
+
         studio_list = Studio.objects.all()
-        user_location = (request.data['latitude'], request.data['longitude'])
+        user_location = (lat, long)
 
         studio_to_distance = []
 
