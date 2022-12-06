@@ -9,6 +9,7 @@ import {
 import UserMarker from "../images/user_marker.svg";
 import StudioMarker from "../images/studio_marker.svg";
 import Geocode from "react-geocode";
+import { useNavigate } from "react-router-dom";
 
 const containerStyle = {
   width: "60vw",
@@ -70,8 +71,46 @@ export default function StudioMap() {
     lat: 43.6532,
     lng: -79.3832,
   });
+  const [markerList, setMarkerList] = useState([]);
 
   Geocode.setApiKey("AIzaSyArlHQrmPayhiioSBJXmzaCSbM0ErHiktQ");
+
+  const handleClick = () => {
+    Geocode.fromAddress(postalCode).then(({ results }) => {
+      const newCenter = results[0].geometry.location;
+      setCenter(newCenter);
+
+      fetch(
+        "http://127.0.0.1:8000/studios/list/?page=1&" +
+          new URLSearchParams({
+            lat: newCenter.lat,
+            long: newCenter.lng,
+          }),
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (response.status === 400) {
+            // TODO: figure out how to do validation lol
+            console.log("Didn't fill in form!");
+            throw new Error(response.status);
+          } else {
+            return response.json();
+          }
+        })
+        .then((data) => {
+          setMarkerList(data)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    });
+  };
 
   return isLoaded ? (
     <div style={{ paddingTop: "100px" }}>
@@ -83,18 +122,19 @@ export default function StudioMap() {
           setPostalCode(e.target.value);
         }}
       ></TextField>
-      <Button variant="primary" style={{color: "brown", marginTop: "10px"}} onClick={() => {
-        Geocode.fromAddress(postalCode).then(({results}) => {
-          setCenter(results[0].geometry.location)
-        });
-      }}>Submit</Button>
+      <Button
+        variant="primary"
+        style={{ color: "brown", marginTop: "10px" }}
+        onClick={handleClick}
+      >
+        Submit
+      </Button>
       <GoogleMap
         mapContainerStyle={containerStyle}
         options={myOptions}
         zoom={15}
         center={center}
       >
-
         <>
           {/* This is the marker of the user */}
           <MarkerF
@@ -102,9 +142,26 @@ export default function StudioMap() {
             icon={{
               url: UserMarker,
             }}
+            label={{text:`YOU ARE HERE`,color:'#000'}}
           />
-        </>
+          {
+            !!markerList && markerList.map((m, index) => {
+              const pos = {lat: Number(m.latitude), lng: Number(m.longitude)}
+              const studioName = m.name;
 
+              return (
+                <MarkerF
+                  key={index}
+                  position={pos}
+                  icon={{
+                    url: StudioMarker,
+                  }}
+                  label={studioName}
+                />
+              )
+            })
+          }
+        </>
       </GoogleMap>
     </div>
   ) : (
