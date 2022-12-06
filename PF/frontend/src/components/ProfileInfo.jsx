@@ -19,7 +19,7 @@ function ProfileInfoCard(props) {
   const navigate = useNavigate();
 
   function handleClick() {
-      navigate("/myaccount/edit")
+    navigate("/myaccount/edit");
   }
 
   useEffect(() => {
@@ -79,7 +79,7 @@ function ProfileInfoCard(props) {
               style={{
                 backgroundColor: "white",
                 width: "50%",
-                height: "200px",
+                height: "250px",
               }}
             >
               <Grid container spacing={2}>
@@ -94,6 +94,17 @@ function ProfileInfoCard(props) {
                     alt={firstName}
                     src={avatar}
                   ></Avatar>
+                  <Button
+                    onClick={handleClick}
+                    variant="secondary"
+                    style={{
+                      color: "#d62828",
+                      marginLeft: "50px",
+                      marginTop: "20px"
+                    }}
+                  >
+                    Edit Profile
+                  </Button>
                 </Grid>
                 <Grid>
                   <h2
@@ -115,7 +126,7 @@ function ProfileInfoCard(props) {
                       paddingLeft: "50px",
                     }}
                   >
-                    {username}
+                    <b>Username:</b> {username}
                   </p>
                   <p
                     style={{
@@ -124,7 +135,7 @@ function ProfileInfoCard(props) {
                       paddingLeft: "50px",
                     }}
                   >
-                    {email}
+                    <b>Email:</b> {email}
                   </p>
                   <p
                     style={{
@@ -133,21 +144,8 @@ function ProfileInfoCard(props) {
                       paddingLeft: "50px",
                     }}
                   >
-                    {phoneNum}
+                    <b>Phone:</b> {phoneNum}
                   </p>
-                </Grid>
-                <Grid>
-                  <Button
-                    onClick={handleClick}
-                    variant="secondary"
-                    style={{
-                      color: "#d62828",
-                      marginTop: "50px",
-                      marginLeft: "220px",
-                    }}
-                  >
-                    Edit Profile
-                  </Button>
                 </Grid>
               </Grid>
             </Card>

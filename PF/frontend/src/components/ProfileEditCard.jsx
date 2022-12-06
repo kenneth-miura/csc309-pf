@@ -7,6 +7,7 @@ import {
   FormControl,
   Input,
   TextField,
+  InputLabel,
 } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
@@ -63,6 +64,7 @@ function ProfileEditCard(props) {
       .then((data) => {
 
 
+        navigate("/myaccount")
       })
       .catch((error) => {
         console.log(error);
@@ -168,6 +170,7 @@ function ProfileEditCard(props) {
                     }}
                   ></Input>
                 </FormControl>
+                <InputLabel style={{paddingTop: "20px"}} htmlFor="avatar">Avatar</InputLabel>
                 <Input type="file" id="avatar" name="avatar" style={{paddingTop: "10px"}} onChange={(e) => {formData.append("avatar", e.target.files[0]); console.log(formData);}}></Input>
                 <div
                   style={{
