@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { Box, Card, Paper } from "@mui/material";
 import Searchbar from "../components/Searchbar";
-import {TimeSelector, convertSelectorValueToTimestamp} from "../components/TimeSelector";
+import {
+  TimeSelector,
+  convertSelectorValueToTimestamp,
+} from "../components/TimeSelector";
 import DateSelector from "../components/DateSelector";
 import Stack from "@mui/material/Stack";
 import dayjs from "dayjs";
-import InfiniteScroll from "react-infinite-scroll-component";
 import ClassComponent from "../components/ClassComponent";
 import Navbar from "../components/Navbar";
 import PaginatedClassList from "../components/PaginatedClassList";
-//TODO: Add time filtering, get pagination working
+import Cookies from "universal-cookie";
 
 function buildParams(fields) {
   const asArray = Object.entries(fields);
@@ -34,6 +36,8 @@ function ClassScheduler() {
   const [filteredResults, setFilteredResults] = useState([]);
 
   function overwriteFilteredResults() {
+    const cookie = new Cookies();
+    const accessToken = cookie.get("accessToken");
     //TODO: add time range
     var url;
     if (date) {
@@ -47,7 +51,7 @@ function ClassScheduler() {
             date: date.format("YYYY-M-D"),
             page: page,
             start_time: convertSelectorValueToTimestamp(times[0]),
-            end_time: convertSelectorValueToTimestamp(times[1])
+            end_time: convertSelectorValueToTimestamp(times[1]),
           })
         );
     } else {
@@ -60,30 +64,43 @@ function ClassScheduler() {
             studio: studio,
             page: page,
             start_time: convertSelectorValueToTimestamp(times[0]),
-            end_time: convertSelectorValueToTimestamp(times[1])
+            end_time: convertSelectorValueToTimestamp(times[1]),
           })
         );
     }
-    console.log({url})
+    console.log({ url });
 
+    var bearer = 'Bearer ' + accessToken;
     fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
+        "Authorization": bearer,
         "Content-Type": "application/json",
       },
     })
-      .then(res => res.json())
+      .then(res => {
+        if (res.status !== 200){
+          setFilteredResults([])
+          throw new Error(res.status)
+        }
+        return res.json();
+      })
       .then(data => {
         setFilteredResults(data.items);
-        setNumPages(data.num_pages)
+        setNumPages(data.num_pages);
       })
       .catch(error => console.log(error));
-    }
+  }
 
-
-  useEffect(overwriteFilteredResults, [className, coachName, studio, date, page, times]);
-
+  useEffect(overwriteFilteredResults, [
+    className,
+    coachName,
+    studio,
+    date,
+    page,
+    times,
+  ]);
 
 
   return (
@@ -94,7 +111,14 @@ function ClassScheduler() {
       }}
     >
       <Navbar position="sticky" isLoginPage={false}></Navbar>
-      <Box sx={{ display: "flex", flexDirection: "row", marginTop: "20vh", backgroundColor: "gray" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          marginTop: "20vh",
+          backgroundColor: "gray",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -103,30 +127,39 @@ function ClassScheduler() {
         >
           <Card
             variant="outlined"
-          style={{
-            backgroundColor: "white",
-            width: "98%",
-            height: "500px",
-            padding: "20px",
-            border: "1px solid"
-          }}>
-          <Stack spacing={2} sx={{ margin: "15px",  }}>
-            <h1>Class Schedule Filter</h1>
-            <Searchbar setSearchQuery={setClassName} targetName="Class" />
-            <Searchbar setSearchQuery={setCoachName} targetName="Coach" />
-            <Searchbar setSearchQuery={setStudio} targetName="Studio" />
-            <TimeSelector selectedTimes={times} setSelectedTimes={setTimes} />
-            <DateSelector date={date} setDate={setDate} />
-          </Stack>
+            style={{
+              backgroundColor: "white",
+              width: "98%",
+              height: "500px",
+              padding: "20px",
+              border: "1px solid",
+            }}
+          >
+            <Stack spacing={2} sx={{ margin: "15px" }}>
+              <h1>Class Schedule Filter</h1>
+              <Searchbar setSearchQuery={setClassName} targetName="Class" />
+              <Searchbar setSearchQuery={setCoachName} targetName="Coach" />
+              <Searchbar setSearchQuery={setStudio} targetName="Studio" />
+              <TimeSelector selectedTimes={times} setSelectedTimes={setTimes} />
+              <DateSelector date={date} setDate={setDate} />
+            </Stack>
           </Card>
         </Box>
         <Box sx={{ flexGrow: 4 }}>
           <Paper>
-
-          <PaginatedClassList numPages={numPages} page={page} setPage={setPage} >
-            {filteredResults.map((value, i) => <ClassComponent classInfo={value} key={i}/>)}
-
-          </PaginatedClassList>
+            <PaginatedClassList
+              numPages={numPages}
+              page={page}
+              setPage={setPage}
+            >
+              {filteredResults.map((value, i) => (
+                <ClassComponent
+                  classInfo={value}
+                  key={i}
+                  updateFilteredResults={overwriteFilteredResults}
+                />
+              ))}
+            </PaginatedClassList>
           </Paper>
         </Box>
       </Box>
