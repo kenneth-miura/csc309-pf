@@ -142,7 +142,6 @@ function ClassScheduler() {
           display: "flex",
           flexDirection: "row",
           marginTop: "20vh",
-          backgroundColor: "gray",
         }}
       >
         <Box

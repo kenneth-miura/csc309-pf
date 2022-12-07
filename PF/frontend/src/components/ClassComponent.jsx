@@ -1,6 +1,10 @@
-import { Box, Stack, Card, Button } from "@mui/material";
+import { Box, Stack, Card, Button, Paper, Chip, Typography} from "@mui/material";
+import { borderRadius } from "@mui/system";
 import Cookies from "universal-cookie";
-const EnrollSingleClassButton = ({ class_id, accessToken, updateFilteredResults }) => {
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+const EnrollSingleClassButton = ({ class_id, accessToken, updateFilteredResults, viewable }) => {
   function enrollSingleClass() {
     var bearer = 'Bearer ' + accessToken;
     fetch(
@@ -35,14 +39,15 @@ const EnrollSingleClassButton = ({ class_id, accessToken, updateFilteredResults 
       onClick={enrollSingleClass}
       variant="contained"
       size="small"
-      sx={{height: "75px", width: "200px"}}
+      sx={{height: "50px", width: "150px"}}
+      disabled={!viewable}
     >
-      Enroll in this class
+      Enroll
     </Button>
   );
 };
 
-const EnrollFutureClassesButton = ({course_id, accessToken, updateFilteredResults}) => {
+const EnrollFutureClassesButton = ({course_id, accessToken, updateFilteredResults, viewable}) => {
   function enrollFutureClasses(){
     var bearer = "Bearer " + accessToken;
 
@@ -78,9 +83,10 @@ const EnrollFutureClassesButton = ({course_id, accessToken, updateFilteredResult
       onClick={enrollFutureClasses}
       variant="contained"
       size="small"
-      sx={{height: "75px", width: "200px"}}
+      sx={{maxHeight: "50px", width: "150px"}}
+      disabled={!viewable}
     >
-      Enroll in the entire class
+      Enroll All
     </Button>
   )
 
@@ -91,60 +97,66 @@ export default function ClassComponent({ classInfo,  updateFilteredResults, hasS
     parseInt(classInfo.capacity_count);
   const currentUserEnrolled = classInfo.current_user_enrolled
   const enrollable = !currentUserEnrolled && remainingSpace > 0 && hasSubscription
+  console.log("______________________________________________")
+  console.log({currentUserEnrolled})
+  console.log({remainingSpace})
+  console.log({hasSubscription})
+  console.log({enrollable})
+  console.log("______________________________________________")
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
-  const isAuth = !!accessToken; // boolean value
 
-  const enrollButtons = (
-    <Stack spacing={2}>
+  const EnrollButtons = ({enrollable}) => {
+    return (
+    <Stack direction="row" spacing={2}>
         <EnrollSingleClassButton
           class_id={classInfo.id}
           accessToken={accessToken}
           updateFilteredResults={updateFilteredResults}
+          viewable={enrollable}
+
         />
         <EnrollFutureClassesButton
           course_id={classInfo.class_offering.id}
           accessToken={accessToken}
           updateFilteredResults={updateFilteredResults}
+          viewable={enrollable}
         />
 
 
     </Stack>
   )
-  const alreadyEnrolledText = (
-    <h2>
-      Already enrolled or Class Capacity full
-    </h2>
-  )
+  }
 
   return (
-    <Card>
+
+    <Card sx={{
+      borderBottom: "1px solid"
+
+    }}>
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-around",
-          border: "1px solid",
-          alignContent: "center",
+          alignItems: "center"
         }}
       >
-        <b>Date: {classInfo.date}</b>
-        <b>
-          {classInfo.time_interval.start_time} -{" "}
-          {classInfo.time_interval.end_time}
-        </b>
+        <Stack spacing={2} sx={{marginY: "10px"}}>
+          <Chip icon={<CalendarTodayIcon/>} label={classInfo.date}/>
+          <Chip icon={<AccessTimeIcon/>} label={classInfo.time_interval.start_time + " - " + classInfo.time_interval.end_time}/>
 
-        <Stack>
-          <h1>{classInfo.class_offering.name}</h1>
-          <h2>{classInfo.class_offering.coach}</h2>
         </Stack>
 
-        <b>Studio: {classInfo.class_offering.studio.name}</b>
+        <Chip icon={<LocationOnIcon/>} label={classInfo.class_offering.studio.name}/>
 
-        <b>Remaining Capacity: {remainingSpace}</b>
-        <b>{"Current user enrolled: " + currentUserEnrolled}</b>
-
+        <div>
+          <Box sx={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+            <Typography variant="h4"><b>{classInfo.class_offering.name.toUpperCase()} </b></Typography>
+            <Typography variant="body1"><i> {classInfo.class_offering.coach} </i></Typography>
+          </Box>
+        </div>
         {!hasSubscription && <h3> No Subscription</h3>}
-        {enrollable && enrollButtons}
+        <EnrollButtons enrollable={enrollable}/>
       </Box>
     </Card>
   );
