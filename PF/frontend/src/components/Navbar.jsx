@@ -24,8 +24,6 @@ function Navbar({ isLoginPage }) {
   const accessToken = cookie.get("accessToken");
 
   const isAuth = !!accessToken; // boolean value
-  console.log(isAuth);
-  console.log(accessToken)
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);

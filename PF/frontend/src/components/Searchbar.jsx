@@ -6,6 +6,7 @@ const Searchbar = ({setSearchQuery, targetName}) => (
   //TODO: if we have time, make this autocomplete
     <TextField
       onInput={(e) => {
+        console.log(e.target.value)
         setSearchQuery(e.target.value);
       }}
       label={"Filter by " + targetName}
