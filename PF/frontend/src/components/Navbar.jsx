@@ -16,12 +16,16 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { useNavigate } from "react-router-dom";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = ["studios", "classes", "pricing"];
 
-function Navbar({ isLoginPage }) {
+function Navbar({ isNotHomePage }) {
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
+
+  const navigate = useNavigate();
 
   const isAuth = !!accessToken; // boolean value
 
@@ -36,6 +40,7 @@ function Navbar({ isLoginPage }) {
 
   const handleLogoutClick = () => {
     cookie.remove("accessToken");
+    navigate("/")
     window.location.reload();
 
   }
@@ -45,7 +50,7 @@ function Navbar({ isLoginPage }) {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <MainLogo style={{ width: "15%" }}></MainLogo>
-          {isLoginPage && (
+          {isNotHomePage && (
             <Button sx={{ my: 2, color: "white", display: "block" }}>
               <NavLink
                 to={`/`}
@@ -71,7 +76,8 @@ function Navbar({ isLoginPage }) {
             ))}
           </Box>
           {/* Renders this part only if it's not on the login page. */}
-          {(!!!isLoginPage && !!!isAuth) && (
+          {/* I removed !!!isNotHomePage because we want login/signup button to show up everywhere */}
+          {!!!isAuth && (
             <Button
               sx={{ my: 2, color: "white", display: "block", right: "40px" }}
             >
@@ -94,7 +100,8 @@ function Navbar({ isLoginPage }) {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+
+                  <AccountCircleIcon sx={{ color: "white", width: 32, height: 32 }}>M</AccountCircleIcon>
                 </IconButton>
               </Tooltip>
               <Menu
@@ -132,8 +139,10 @@ function Navbar({ isLoginPage }) {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem>
-                  <Avatar /> My account
+                <MenuItem onClick={() => {
+                  navigate('/myaccount');
+                }}>
+                  My account
                 </MenuItem>
                 <Divider />
                 <MenuItem>
