@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Card } from "@mui/material";
+import { Box, Card, Paper } from "@mui/material";
 import Searchbar from "../components/Searchbar";
 import TimeSelector from "../components/TimeSelector";
 import DateSelector from "../components/DateSelector";
@@ -8,6 +8,7 @@ import dayjs from "dayjs";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ClassComponent from "../components/ClassComponent";
 import Navbar from "../components/Navbar";
+import PaginatedClassList from "../components/PaginatedClassList";
 //TODO: Add time filtering, get pagination working
 
 function buildParams(fields) {
@@ -26,12 +27,11 @@ function ClassScheduler() {
   const [className, setClassName] = useState("");
   const [coachName, setCoachName] = useState("");
   const [studio, setStudio] = useState("");
-  const [times, setTimes] = useState([20, 37]);
+  const [times, setTimes] = useState([8, 12]);
   const [date, setDate] = useState(dayjs());
-  const [filteredResults, setFilteredResults] = useState([]);
   const [page, setPage] = useState(1);
-  const [length, setLength] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
+  const [numPages, setNumPages] = useState(0);
+  const [filteredResults, setFilteredResults] = useState([]);
 
   function overwriteFilteredResults() {
     //TODO: add time range
@@ -45,7 +45,7 @@ function ClassScheduler() {
             coach_name: coachName,
             studio: studio,
             date: date.format("YYYY-M-D"),
-            page: 1,
+            page: page,
           })
         );
     } else {
@@ -56,10 +56,11 @@ function ClassScheduler() {
             class_name: className,
             coach_name: coachName,
             studio: studio,
-            page: 1,
+            page: page,
           })
         );
     }
+    console.log({url})
 
     fetch(url, {
       method: "GET",
@@ -70,72 +71,15 @@ function ClassScheduler() {
     })
       .then(res => res.json())
       .then(data => {
-        setPage(2);
-        console.log("OVERWRITING")
-        console.log(data)
         setFilteredResults(data.items);
-        setLength(data.total_count);
-        setHasNext(data.has_next);
+        setNumPages(data.num_pages)
       })
       .catch(error => console.log(error));
     }
 
-  function updateFilteredResults() {
-    console.log("UPDATING AT TOP")
-    //TODO: add time range
-    var url;
-    if (date) {
-      url =
-        "http://127.0.0.1:8000/studios/class_instance/filter/?" +
-        new URLSearchParams(
-          buildParams({
-            class_name: className,
-            coach_name: coachName,
-            studio: studio,
-            date: date.format("YYYY-M-D"),
-            page: page,
-          })
-        );
-    } else {
-      url =
-        "http://127.0.0.1:8000/studios/class_instance/filter/?" +
-        new URLSearchParams(
-          buildParams({
-            class_name: className,
-            coach_name: coachName,
-            studio: studio,
-            page: page,
-          })
-        );
-    }
 
-    console.log("Fetching from " + url + " for infinite scroll")
+  useEffect(overwriteFilteredResults, [className, coachName, studio, date, page]);
 
-    fetch(url, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setPage(page + 1);
-          console.log(data)
-          const newFilteredResults = filteredResults
-          newFilteredResults.push(...data.items)
-          console.log({newFilteredResults})
-          setFilteredResults(newFilteredResults);
-          setHasNext(data.has_next);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-
-  useEffect(overwriteFilteredResults, [className, coachName, studio, date]);
-
-  console.log({hasNext})
 
 
   return (
@@ -170,26 +114,16 @@ function ClassScheduler() {
             <TimeSelector selectedTimes={times} setSelectedTimes={setTimes} />
             <DateSelector date={date} setDate={setDate} />
           </Stack>
-
           </Card>
         </Box>
         <Box sx={{ flexGrow: 4 }}>
-          <InfiniteScroll
-            style={{ height: "500px" }}
-            dataLength={length} //This is important field to render the next data
-            next={updateFilteredResults}
-            hasMore={hasNext}
-            scrollThreshold={0.8}
-            endMessage={
-              <p style={{ textAlign: "center" }}>
-                <b>Yay! You have seen it all</b>
-              </p>
-            }
-          >
-            {filteredResults.map((val, i) => (
-              <ClassComponent classInfo={val} key={i} index={i}/>
-            ))}
-          </InfiniteScroll>
+          <Paper>
+
+          <PaginatedClassList numPages={numPages} page={page} setPage={setPage} >
+            {filteredResults.map((value, i) => <ClassComponent classInfo={value} key={i}/>)}
+
+          </PaginatedClassList>
+          </Paper>
         </Box>
       </Box>
     </Box>

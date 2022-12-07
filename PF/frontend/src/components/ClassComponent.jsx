@@ -1,5 +1,5 @@
 import { Box, Stack, Card } from "@mui/material";
-export default function ClassComponent({ classInfo,index }) {
+export default function ClassComponent({ classInfo }) {
   const remainingSpace =
     parseInt(classInfo.class_offering.capacity) -
     parseInt(classInfo.capacity_count);
@@ -13,7 +13,7 @@ export default function ClassComponent({ classInfo,index }) {
           alignContent: "center",
         }}
       >
-        <b>{index}</b>
+        <b>Date: {classInfo.date}</b>
         <b>
           {classInfo.time_interval.start_time} -{" "}
           {classInfo.time_interval.end_time}
