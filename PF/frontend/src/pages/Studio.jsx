@@ -279,7 +279,7 @@ function StudioPage() {
               />
               <Tab
                 style={{ color: "brown" }}
-                label="Studio Maps"
+                label="Studios Map"
                 {...a11yProps(1)}
               />
             </Tabs>
