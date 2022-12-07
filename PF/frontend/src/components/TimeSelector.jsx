@@ -1,10 +1,19 @@
 
 import Slider from '@mui/material/Slider';
+import { useState } from 'react';
+function convertSelectorValueToTimestamp(value){
+  return value + ":" + "00"
+}
 const TimeSelector = ({ selectedTimes, setSelectedTimes }) => {
+  const [internalTime, setInternalTime] = useState(selectedTimes)
+
 
   function cvtToTimestamp(twentyFourHourTime){
     if (twentyFourHourTime < 12){
       return twentyFourHourTime + " AM"
+    }
+    else if (twentyFourHourTime == 12){
+      return twentyFourHourTime + " PM"
     }
     else {
       const cvtedTime = twentyFourHourTime % 12 + " PM"
@@ -19,9 +28,12 @@ const TimeSelector = ({ selectedTimes, setSelectedTimes }) => {
       max={22}
       step={1}
       marks
-      value={selectedTimes}
-      onChange={(e, value) => {
+      value={internalTime}
+      onChangeCommitted={(e, value) => {
         setSelectedTimes(value);
+      }}
+      onChange={(e, value) => {
+        setInternalTime(value)
       }}
       valueLabelDisplay="on"
       valueLabelFormat={cvtToTimestamp}
@@ -29,4 +41,4 @@ const TimeSelector = ({ selectedTimes, setSelectedTimes }) => {
   );
 };
 
-export default TimeSelector
+export {TimeSelector, convertSelectorValueToTimestamp}

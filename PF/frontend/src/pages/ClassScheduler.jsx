@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Card, Paper } from "@mui/material";
 import Searchbar from "../components/Searchbar";
-import TimeSelector from "../components/TimeSelector";
+import {TimeSelector, convertSelectorValueToTimestamp} from "../components/TimeSelector";
 import DateSelector from "../components/DateSelector";
 import Stack from "@mui/material/Stack";
 import dayjs from "dayjs";
@@ -27,7 +27,7 @@ function ClassScheduler() {
   const [className, setClassName] = useState("");
   const [coachName, setCoachName] = useState("");
   const [studio, setStudio] = useState("");
-  const [times, setTimes] = useState([8, 12]);
+  const [times, setTimes] = useState([6, 12]);
   const [date, setDate] = useState(dayjs());
   const [page, setPage] = useState(1);
   const [numPages, setNumPages] = useState(0);
@@ -46,6 +46,8 @@ function ClassScheduler() {
             studio: studio,
             date: date.format("YYYY-M-D"),
             page: page,
+            start_time: convertSelectorValueToTimestamp(times[0]),
+            end_time: convertSelectorValueToTimestamp(times[1])
           })
         );
     } else {
@@ -57,6 +59,8 @@ function ClassScheduler() {
             coach_name: coachName,
             studio: studio,
             page: page,
+            start_time: convertSelectorValueToTimestamp(times[0]),
+            end_time: convertSelectorValueToTimestamp(times[1])
           })
         );
     }
@@ -78,7 +82,7 @@ function ClassScheduler() {
     }
 
 
-  useEffect(overwriteFilteredResults, [className, coachName, studio, date, page]);
+  useEffect(overwriteFilteredResults, [className, coachName, studio, date, page, times]);
 
 
 
