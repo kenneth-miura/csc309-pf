@@ -101,9 +101,11 @@ class StudioListView(APIView, LimitOffsetPagination):
             # Defaults to returning the whole list of studios if no page is given.
             return Response(studios)
 
-class StudioListFilterClassInstanceView(APIView):
+class StudioListFilterClassInstanceView(APIView, LimitOffsetPagination):
     serializer_class = ClassInstanceSerializer
 
+
+    pagination_class = LimitOffsetPagination
     def get(self, request):
         raw_filters = request.query_params
         filters = {}
@@ -121,22 +123,24 @@ class StudioListFilterClassInstanceView(APIView):
 
             if k == "start_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
+                print("start time: ", formatted_time)
 
-                filters["time_interval__start_time"] = formatted_time
+                filters["time_interval__start_time__gte"] = formatted_time
 
             if k == "end_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
+                print("end time ", formatted_time)
 
-                filters["time_interval__end_time"] = formatted_time
-        print(filters)
-        filtered_list = ClassInstance.objects.filter(**filters)
+                filters["time_interval__end_time__lte"] = formatted_time
+        filtered_list = ClassInstance.objects.filter(**filters).order_by('date')
         serialized_classes = [ClassInstanceSerializer(i).data for i in filtered_list]
         page_class_lst = Paginator(serialized_classes, 10)
         pg = request.GET.get("page")
 
         if pg is not None:
             page_num = int(pg)
-            return Response(page_class_lst.get_page(page_num).object_list)
+            page_class = page_class_lst.get_page(page_num)
+            return Response({ "has_next": page_class.has_next(), "total_count": page_class_lst.count, "num_pages": page_class_lst.num_pages, "items": page_class.object_list,})
         else:
             return Response(serialized_classes)
 
