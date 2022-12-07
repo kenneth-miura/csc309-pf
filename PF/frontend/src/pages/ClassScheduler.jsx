@@ -34,10 +34,31 @@ function ClassScheduler() {
   const [page, setPage] = useState(1);
   const [numPages, setNumPages] = useState(0);
   const [filteredResults, setFilteredResults] = useState([]);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const cookie = new Cookies();
+  const accessToken = cookie.get("accessToken");
+  const bearer = "Bearer " + accessToken;
+
+  useEffect(
+    () => {
+      fetch("http://127.0.0.1:8000/subscriptions/has_subscription/",
+      {
+        method: "GET",
+        headers: {
+          "Authorization": bearer
+        }
+      }).then(res => {
+        if (res.status!== 200){
+          throw new Error(res.status)
+        }
+        return res.json()
+      })
+      .then(data => setHasSubscription(data.has_active_subscription))
+      .catch(error => console.error(error))
+    }, [bearer]
+  )
 
   function overwriteFilteredResults() {
-    const cookie = new Cookies();
-    const accessToken = cookie.get("accessToken");
     //TODO: add time range
     var url;
     if (date) {
@@ -52,6 +73,7 @@ function ClassScheduler() {
             page: page,
             start_time: convertSelectorValueToTimestamp(times[0]),
             end_time: convertSelectorValueToTimestamp(times[1]),
+            show_only_in_subscription: hasSubscription
           })
         );
     } else {
@@ -65,28 +87,31 @@ function ClassScheduler() {
             page: page,
             start_time: convertSelectorValueToTimestamp(times[0]),
             end_time: convertSelectorValueToTimestamp(times[1]),
+            show_only_in_subscription: hasSubscription
           })
         );
     }
     console.log({ url });
 
-    var bearer = 'Bearer ' + accessToken;
+    var bearer = "Bearer " + accessToken;
     fetch(url, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Authorization": bearer,
+        Authorization: bearer,
         "Content-Type": "application/json",
       },
     })
       .then(res => {
-        if (res.status !== 200){
-          setFilteredResults([])
-          throw new Error(res.status)
+        if (res.status !== 200) {
+          setFilteredResults([]);
+          throw new Error(res.status);
         }
         return res.json();
       })
       .then(data => {
+        //TODO: add a field in backend that requests only classes that have
+        // dates before the end of the current subscription
         setFilteredResults(data.items);
         setNumPages(data.num_pages);
       })
@@ -100,8 +125,9 @@ function ClassScheduler() {
     date,
     page,
     times,
+    hasSubscription,
+    accessToken
   ]);
-
 
   return (
     <Box
@@ -152,13 +178,16 @@ function ClassScheduler() {
               page={page}
               setPage={setPage}
             >
-              {filteredResults.map((value, i) => (
-                <ClassComponent
-                  classInfo={value}
-                  key={i}
-                  updateFilteredResults={overwriteFilteredResults}
-                />
-              ))}
+              {filteredResults.map((value, i) => {
+                return (
+                  <ClassComponent
+                    classInfo={value}
+                    key={i}
+                    updateFilteredResults={overwriteFilteredResults}
+                    hasSubscription={hasSubscription}
+                  />
+                );
+              })}
             </PaginatedClassList>
           </Paper>
         </Box>
