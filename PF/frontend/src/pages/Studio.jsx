@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Box,
@@ -7,6 +7,7 @@ import {
   Input,
   TextField,
   InputLabel,
+  TableFooter,
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -16,8 +17,8 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
-import TablePagination from "@mui/material/TablePagination";
 import { Stack } from "@mui/system";
+import Pagination from "@mui/material/Pagination";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -33,6 +34,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import CloseIcon from "@mui/icons-material/Close";
+import Grid from "@mui/material/Grid";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -137,6 +139,8 @@ function StudioPage() {
     setValue(newValue);
   };
 
+  const pageSize = 10;
+
   const [currPage, setCurrPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [itemList, setItemList] = useState([]);
@@ -146,7 +150,6 @@ function StudioPage() {
   const [coachName, setCoachName] = useState("");
   const [amenities, setAmenities] = useState("");
   const [currItem, setCurrItem] = useState(null);
-  const [googleDirection, setGoogleDirection] = useState("");
 
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = (info) => {
@@ -156,6 +159,10 @@ function StudioPage() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    fetchData(currPage, studioName, classOfferingName, coachName, amenities);
+  }, [currPage, studioName, classOfferingName, coachName, amenities])
 
   const fetchData = (
     curPage,
@@ -216,8 +223,7 @@ function StudioPage() {
   };
 
   const handleGetDirections = (id) => {
-
-    let serverUrl = `http://127.0.0.1:8000/studios/${id}/directions/`
+    let serverUrl = `http://127.0.0.1:8000/studios/${id}/directions/`;
 
     fetch(serverUrl, {
       method: "GET",
@@ -235,15 +241,16 @@ function StudioPage() {
         }
       })
       .then((data) => {
-        setGoogleDirection(data.map_link)
         window.open(data.map_link);
       })
       .catch((error) => {
         // console.log(error);
       });
-    
-  }
+  };
 
+  const handleChangePage = (event, value) => {
+    fetchData(value, studioName, classOfferingName, coachName, amenities);
+  };
 
   return (
     <div>
@@ -259,7 +266,7 @@ function StudioPage() {
         >
           <Box
             sx={{
-              paddingTop: "100px",
+              paddingTop: "150px",
               borderBottom: 1,
               borderColor: "divider",
             }}
@@ -282,6 +289,8 @@ function StudioPage() {
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
+            <Grid container spacing={2} style={{width: "100vw"}}>
+            <Grid item xs={12} md={3}>
             <Stack>
               <FormControl style={{ width: "300px" }}>
                 <Input
@@ -351,8 +360,9 @@ function StudioPage() {
                 </Button>
               </div>
             </Stack>
-
-            <TableContainer component={Paper}>
+            </Grid>
+            <Grid  item xs={12} md={9}>
+            <TableContainer component={Paper} style={{}}>
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
@@ -381,7 +391,9 @@ function StudioPage() {
                           color="primary"
                           aria-label="upload picture"
                           component="label"
-                          onClick={() => {handleClickOpen(info)}}
+                          onClick={() => {
+                            handleClickOpen(info);
+                          }}
                         >
                           <LaunchIcon />
                         </IconButton>
@@ -389,8 +401,25 @@ function StudioPage() {
                     </StyledTableRow>
                   ))}
                 </TableBody>
+                <TableFooter>
+                  <StyledTableRow>
+                    <StyledTableCell colSpan={5}>
+                      <Pagination
+                        count={Math.ceil(totalCount / (1.0 * pageSize))}
+                        page={currPage}
+                        showFirstButton
+                        showLastButton
+                        variant="outlined"
+                        shape="rounded"
+                        onChange={handleChangePage}
+                      />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </TableFooter>
               </Table>
             </TableContainer>
+            </Grid>
+            </Grid>
             <BootstrapDialog
               fullWidth={true}
               onClose={handleClose}
@@ -405,14 +434,21 @@ function StudioPage() {
               </BootstrapDialogTitle>
               <DialogContent dividers>
                 <Typography component={"span"} gutterBottom>
-                 Address: {!!currItem && <Typography>{currItem.address}</Typography>}
+                  Address:{" "}
+                  {!!currItem && <Typography>{currItem.address}</Typography>}
                 </Typography>
-                <Typography component={"span"}  gutterBottom>
-                  Phone Number: {!!currItem && <Typography>{currItem.phone_num}</Typography>}
+                <Typography component={"span"} gutterBottom>
+                  Phone Number:{" "}
+                  {!!currItem && <Typography>{currItem.phone_num}</Typography>}
                 </Typography>
               </DialogContent>
               <DialogActions>
-                <Button autoFocus onClick={() => {handleGetDirections(currItem.id)}}>
+                <Button
+                  autoFocus
+                  onClick={() => {
+                    handleGetDirections(currItem.id);
+                  }}
+                >
                   Get Directions
                 </Button>
               </DialogActions>

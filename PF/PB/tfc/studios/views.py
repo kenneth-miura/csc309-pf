@@ -186,21 +186,23 @@ class StudioListFilterView(APIView):
 
         filtered_lst = Studio.objects.filter(**filters)
 
-        amen_lst_raw = raw_amenities.split(", ")
+        if len(raw_amenities) != 0:
+            amen_lst_raw = raw_amenities.split(", ")
 
-        if len(amen_lst_raw) == 0:
-            amen_lst = [a.strip(",") for a in amen_lst_raw]
+            if len(amen_lst_raw) != 0:
+                for x in amen_lst_raw:
+                    amen_lst.append(x.strip(","))
 
-        if amen_lst:
-            for x in amen_lst:
-                filtered_lst = filtered_lst.filter(Q(amenities__name=x)).distinct()
-                # Keep on filtering based on the amenities
-
-        print()
+            if amen_lst:
+                for x in amen_lst:
+                    filtered_lst = filtered_lst.filter(Q(amenities__name=x)).distinct()
+                    # Keep on filtering based on the amenities
 
         total_count = len(filtered_lst)
 
         serialized_lst = [StudioSerializer(i).data for i in filtered_lst]
+
+        print(serialized_lst)
 
         page_studio_lst = Paginator(serialized_lst, 10)
 
