@@ -16,11 +16,14 @@ function RegisterForm(props) {
   const [phonenumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
 
-  const [formError, setFormError] = useState(false);
+  const [passwordNotMatch, setPasswordNotMatch] = useState(false);
+  const [formNotFilledIn, setFormNotFilledIn] = useState(false);
 
   useEffect(() => {
     if (password1 !== password2) {
-      setFormError(true);
+      setPasswordNotMatch(true);
+    } else {
+      setPasswordNotMatch(false);
     }
   })
 
@@ -47,9 +50,11 @@ function RegisterForm(props) {
       ).then((response) => {
         if (response.status === 400) {
           console.log("Error in form!");
+          setFormNotFilledIn(true);
           throw new Error(response.status);
         } else {
           return response.json();
+          setFormNotFilledIn(false);
         }
       }).then((data) => {
         console.log("HELLO?")
@@ -180,7 +185,12 @@ function RegisterForm(props) {
                   ></Input>
                   <label>Avatar</label>
                 </FormControl>
-                {formError && (
+                {formNotFilledIn && (
+                  <p style={{ color: "red" }}>
+                    Please enter information into all parts of the form.
+                  </p>
+                )}
+                {passwordNotMatch && (
                   <p style={{ color: "red" }}>
                     Passwords do not match.
                   </p>
