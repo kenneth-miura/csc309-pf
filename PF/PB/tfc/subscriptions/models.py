@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import CASCADE
+from django.db.models import CASCADE, SET_NULL
 from accounts.models import TFCUser
 import datetime
 import dateutil.relativedelta as rd
@@ -43,18 +43,20 @@ class PaymentMethod(models.Model):
 
 class PaymentHistory(models.Model):
     amount = models.PositiveIntegerField()
-    payment_method = models.ForeignKey(to=PaymentMethod, on_delete=CASCADE)
+    payment_method = models.ForeignKey(to=PaymentMethod, null=True, on_delete=SET_NULL)
     date_time = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
 
 
 class Subscription(models.Model):
     # subscription type is one subscription type to many subscriptions
     subscription_type = models.ForeignKey(to=SubscriptionPlan, on_delete=CASCADE)
     # subscription payment method is one subscription to one payment mehtods
-    payment_method = models.OneToOneField(to=PaymentMethod, on_delete=CASCADE)
+    payment_method = models.OneToOneField(to=PaymentMethod, null=True, on_delete=SET_NULL)
     # add user
     user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
     next_payment_date = models.DateField()
+    active = models.BooleanField(default=True)
 
     def get_billing_period_end(self):
         return self.next_payment_date + rd.relativedelta(days=-1)
@@ -85,7 +87,7 @@ class Subscription(models.Model):
         today = datetime.date.today()
         payment_amount = self.subscription_type.price
         payment_history = PaymentHistory.objects.create(amount=payment_amount,
-                                                        payment_method=self.payment_method)
+                                                        payment_method=self.payment_method, user=self.user)
         payment_history.save()
         period = get_period(self.subscription_type.period)
         self.next_payment_date = self.get_next_payment_date_from_date(today, period)
@@ -107,5 +109,19 @@ class Subscription(models.Model):
         return self
 
 
+def will_have_active_subscription(user_id, date):
+    query = Subscription.objects.filter(user=user_id).filter(active=True)
+
+    print("Date is ",date)
+    print("current billing period end: ", query.get().get_billing_period_end())
+
+    return query.exists() and query.get().get_billing_period_end() > date
+
 def has_active_subscription(user_id):
-    return Subscription.objects.filter(user=user_id).exists()
+    query = Subscription.objects.filter(user=user_id).filter(active=True)
+    date = datetime.date.today()
+
+
+    return query.exists() and query.get().get_billing_period_end() > date
+
+

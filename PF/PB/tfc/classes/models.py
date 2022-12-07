@@ -9,7 +9,7 @@ import dateutil.relativedelta as rd
 import calendar
 from .exceptions import EnrollmentException, CapacityException, NotSubscribedException, \
     TargetInPastException
-from subscriptions.models import has_active_subscription
+from subscriptions.models import has_active_subscription, will_have_active_subscription
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 
@@ -30,6 +30,25 @@ def end_recursion_only_gte_today(value):
 
     if value < today:
         raise ValidationError("End_Recursion_Date cannot be in the past")
+
+def get_past_weekday(date, day_num):
+    relativedelta = None
+    match day_num:
+        case 0:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.MONDAY)
+        case 1:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.TUESDAY)
+        case 2:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.WEDNESDAY)
+        case 3:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.THURSDAY)
+        case 4:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.FRIDAY)
+        case 5:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.SATURDAY)
+        case 6:
+            relativedelta = rd.relativedelta(days=0, weekday=calendar.FRIDAY)
+    return date - relativedelta
 
 
 def get_next_weekday(date, day_num):
@@ -135,6 +154,20 @@ def handle_recursion_date_change(sender, instance, **kwargs):
     except sender.DoesNotExist:
         # Object is new, so we do nothing
         return
+
+    # handle changing start date
+    if not old_obj.start_recursion_date == instance.start_recursion_date:
+        old_start_recursion_date = old_obj.start_recursion_date
+        new_start_recursion_date = instance.start_recursion_date
+
+        if new_start_recursion_date > old_start_recursion_date:
+            for time_interval in instance.timeinterval_set.all():
+                time_interval.delete_instances_before_date(new_recursion_date)
+        elif new_start_recursion_date < old_start_recursion_date:
+            for time_interval in instance.timeinterval_set.all():
+                time_interval.generate_past_class_instances(new_start_recursion_date, old_start_recursion_date)
+
+    # handle if end recursion date has changed
     if not old_obj.end_recursion_date == instance.end_recursion_date:
         # field has changed
         old_recursion_date = old_obj.end_recursion_date
@@ -167,6 +200,28 @@ class TimeInterval(models.Model):
 
         self.classinstance_set.filter(date__gt=exclusive_date).delete()
 
+    def delete_instances_before_date(self, exclusive_date):
+        self.classinstance_set.filter(date__lt=exclusive_date).delete()
+
+    def generate_past_class_instances(self, inclusive_start_date, exclusive_end_date):
+        offering = self.class_offering
+        next_class_date = get_past_weekday(inclusive_start_date, self.day)
+        users_enrolled = [(user_offering_enroll.user, user_offering_enroll.date_enrolled) for user_offering_enroll in offering.userofferingenrollment_set.all()]
+
+        while next_class_date < exclusive_end_date:
+            class_instance = ClassInstance(date=next_class_date, class_offering=offering,
+                                           time_interval=self)
+            class_instance.save()
+            for user,enroll_date in users_enrolled:
+                try:
+                    class_instance.enroll_user(user, enroll_date=enroll_date)
+                except TargetInPastException as e:
+                    print(e)
+            next_class_date += rd.relativedelta(days=7)
+
+
+
+
     def generate_future_class_instances(self, start_date):
         """
 
@@ -198,7 +253,8 @@ class TimeInterval(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.clear_class_instances()
-        self.generate_future_class_instances(datetime.date.today())
+        recursion_start_date = self.class_offering.start_recursion_date
+        self.generate_future_class_instances(recursion_start_date)
 
 
 # https://stackoverflow.com/questions/13014411/django-post-save-signal-implementation
@@ -235,17 +291,21 @@ class ClassInstance(models.Model):
         user_enrollment.delete()
         self.save()
 
-    def enroll_user(self, user):
+    def enroll_user(self, user, enroll_date=datetime.date.today()):
         # check that it is in the future
         if self.date <= datetime.date.today():
             raise TargetInPastException
         # check for subscription
         if not has_active_subscription(user.id):
-            raise NotSubscribedException
+            raise NotSubscribedException("User is not subscribed right now")
+        if not will_have_active_subscription(user.id, date=self.date):
+            raise NotSubscribedException(f"User will not have active subscription by {enroll_date}" )
         if self.capacity_count == self.class_offering.capacity:
             raise CapacityException
         if self.user_enrolled(user):
             raise EnrollmentException
+        if enroll_date > self.date:
+            raise TargetInPastException
         self.capacity_count += 1
         user_enroll = UserInstanceEnroll.objects.create(class_instance=self,
                                                 class_offering=self.class_offering, user=user)
@@ -276,5 +336,6 @@ class UserInstanceEnroll(models.Model):
 class UserOfferingEnrollment(models.Model):
     class_offering = models.ForeignKey(to=ClassOffering, on_delete=CASCADE)
     user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
+    date_enrolled = models.DateField(auto_now_add=True)
     # This
     pass

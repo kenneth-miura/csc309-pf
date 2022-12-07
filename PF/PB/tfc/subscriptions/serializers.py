@@ -1,4 +1,5 @@
 from .models import Subscription, SubscriptionPlan, PaymentMethod, PaymentHistory
+from accounts.models import TFCUser
 from accounts.serializers import TFCUserSerializer
 from rest_framework.fields import CurrentUserDefault
 from rest_framework import serializers
@@ -22,10 +23,20 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
 class PaymentHistorySerializer(serializers.ModelSerializer):
     payment_method = PaymentMethodSerializer(read_only=True)
     payment_method_id = serializers.IntegerField(write_only=True)
+    user = TFCUserSerializer(read_only=True)
+    user_id = serializers.IntegerField(write_only=True)
+
+    def create(self, validated_data):
+        user_id = validated_data['user_id']
+        user = get_object_or_404(TFCUser, pk=user_id)
+
+        payment_method_id = validated_data['payment_method_id']
+        payment_method = get_object_or_404(PaymentMethod, pk=payment_method_id)
+        return PaymentHistory.objects.create(amount=validated_data['amount'], payment_method=payment_method, user=user)
 
     class Meta:
         model = PaymentHistory
-        fields = ["amount", "date_time", "payment_method", "payment_method_id"]
+        fields = ["amount", "date_time", "payment_method", "payment_method_id", "user", "user_id"]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):

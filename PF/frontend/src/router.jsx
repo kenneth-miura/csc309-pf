@@ -2,9 +2,10 @@ import React from 'react';
 import App from './App';
 import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
-import TestSubPage from './pages/TestSubPage'
+import Profile from './pages/Profile'
+import EditProfilePage from './pages/EditProfile';
+import EditAvatarPage from './pages/EditAvatar';
 import RegisterForm from './pages/Register'
-
 
 import {
     createBrowserRouter,
@@ -24,13 +25,21 @@ const router = createBrowserRouter([
         element: <LoginPage></LoginPage>,
     },
     {
-      path: "/login/studio",
-      element: <TestSubPage></TestSubPage>
-  },
-  {
     path: "/register",
-    element: <RegisterForm></RegisterForm>
-}
+    element: <RegisterForm></RegisterForm>,
+    },
+    {
+      path: "/myaccount",
+      element: <Profile></Profile>
+    },
+    {
+      path: "/myaccount/edit",
+      element: <EditProfilePage></EditProfilePage>
+    },
+    {
+      path: "/myaccount/avatar",
+      element: <EditAvatarPage></EditAvatarPage>
+    }
 ]);
 
 export default router;

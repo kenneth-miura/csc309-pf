@@ -1,16 +1,18 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .views import CreateUserView, UpdateUserProfileView, RetrieveClassScheduleView, RetrieveClassHistoryView
+from .views import  RetrieveUserView, CreateUserView, UpdateUserProfileView, RetrieveClassScheduleView, RetrieveClassHistoryView, EnrolledClassesView
 
 app_name = 'accounts'
 
 urlpatterns = [
     path('register/', CreateUserView.as_view()),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('info/', RetrieveUserView.as_view()),
     path('update/', UpdateUserProfileView.as_view()),
     path('<int:user_id>/schedule/', RetrieveClassScheduleView.as_view()),
     path('<int:user_id>/history/', RetrieveClassHistoryView.as_view()),
+    path('<int:user_id>/enrolled/', EnrolledClassesView.as_view())
 ]
 
 # ABOUT:  path('login/', ...)
