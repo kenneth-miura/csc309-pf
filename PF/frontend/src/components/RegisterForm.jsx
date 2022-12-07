@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Tab, Card, Box, Button, FormControl, Input } from "@mui/material";
 import Navbar from "./Navbar";
 import { Stack } from "@mui/system";
@@ -16,7 +16,13 @@ function RegisterForm(props) {
   const [phonenumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
 
-  let formError = false;
+  const [formError, setFormError] = useState(false);
+
+  useEffect(() => {
+    if (password1 !== password2) {
+      setFormError(true);
+    }
+  })
 
   function handleRegister(data) {
     data.preventDefault();
@@ -41,7 +47,6 @@ function RegisterForm(props) {
       ).then((response) => {
         if (response.status === 400) {
           console.log("Error in form!");
-          formError = true;
           throw new Error(response.status);
         } else {
           return response.json();
@@ -177,7 +182,7 @@ function RegisterForm(props) {
                 </FormControl>
                 {formError && (
                   <p style={{ color: "red" }}>
-                    Please complete the form or check the password
+                    Passwords do not match.
                   </p>
                 )}
                 <Button
