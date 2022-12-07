@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
-import { NavLink } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ProfileInfoCard from "../components/ProfileInfo";
 import Cookies from "universal-cookie";
