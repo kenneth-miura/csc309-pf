@@ -6,6 +6,7 @@ import Profile from './pages/Profile'
 import EditProfilePage from './pages/EditProfile';
 import EditAvatarPage from './pages/EditAvatar';
 import RegisterForm from './pages/Register'
+import StudioPage from './pages/Studio';
 
 import {
     createBrowserRouter,
@@ -13,6 +14,7 @@ import {
     RouterProvider,
     Route,
   } from "react-router-dom";
+
 
 const router = createBrowserRouter([
     {
@@ -39,6 +41,10 @@ const router = createBrowserRouter([
     {
       path: "/myaccount/avatar",
       element: <EditAvatarPage></EditAvatarPage>
+    },
+    {
+      path: "/studios",
+      element: <StudioPage></StudioPage>
     }
 ]);
 
