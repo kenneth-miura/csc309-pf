@@ -5,6 +5,7 @@ import LoginPage from './pages/Login';
 import Profile from './pages/Profile'
 import EditProfilePage from './pages/EditProfile';
 import EditAvatarPage from './pages/EditAvatar';
+import RegisterForm from './pages/Register'
 import StudioPage from './pages/Studio';
 
 import {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     {
         path: "/login",
         element: <LoginPage></LoginPage>,
+    },
+    {
+    path: "/register",
+    element: <RegisterForm></RegisterForm>,
     },
     {
       path: "/myaccount",
