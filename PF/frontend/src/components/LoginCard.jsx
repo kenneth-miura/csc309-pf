@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Tab, Card, Box, Button, FormControl, Input, TextField } from "@mui/material";
 import Navbar from "./Navbar";
 import { NavLink } from "react-router-dom";
@@ -8,14 +8,29 @@ import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
 function LoginCard(props) {
-  let formNotFilledIn = false;
-  let accountNotExist = false;
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const cookie = new Cookies();
   const navigate = useNavigate();
 
+  const [usernameNotFilledIn, setUsernameNotFilledIn] = useState(false);
+  const [passwordNotFilledIn, setPasswordNotFilledIn] = useState(false);
+  const [accountNotExist, setAccountNotExist] = useState(false);
+
+  useEffect(() => {
+    if (!!!username) {
+      setUsernameNotFilledIn(true);
+    } else {
+      setUsernameNotFilledIn(false);
+    }
+    
+    if (!!!password) {
+      setPasswordNotFilledIn(true);
+    } else {
+      setPasswordNotFilledIn(false);
+    }
+  })
+  
   function handleSubmit(data) {
     data.preventDefault();
 
@@ -35,11 +50,10 @@ function LoginCard(props) {
         if (response.status === 400) {
           // TODO: figure out how to do validation lol
           console.log("Didn't fill in form!");
-          formNotFilledIn = true;
           throw new Error(response.status);
         } else if (response.status === 401) {
           console.log("Account doesn't exist!");
-          accountNotExist = true;
+          setAccountNotExist(true);
           throw new Error(response.status);
         } else {
           return response.json();
@@ -72,7 +86,7 @@ function LoginCard(props) {
           style={{
             backgroundColor: "white",
             width: "700px",
-            height: "500px",
+            height: "700px",
             marginTop: "20vh",
             marginBottom: "24vh",
           }}
@@ -106,7 +120,8 @@ function LoginCard(props) {
                     }}
                   ></Input>
                 </FormControl>
-                {formNotFilledIn && <p style={{color: "red"}}>Please fill in both</p>}
+                {passwordNotFilledIn && <p style={{color: "red"}}>Please enter a password. </p>}
+                {usernameNotFilledIn && <p style={{color: "red"}}>Please enter a username. </p>}
                 {accountNotExist && <p style={{color: "red"}}>The account does not exist.</p>}
                 <div
                   style={{
