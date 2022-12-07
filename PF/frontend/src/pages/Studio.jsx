@@ -176,7 +176,6 @@ function StudioPage() {
 
     if (!!name) {
       serverUrl = serverUrl + "&name=" + name;
-      console.log(serverUrl);
     }
 
     if (!!class_offering_name) {
@@ -206,9 +205,6 @@ function StudioPage() {
         }
       })
       .then((data) => {
-        console.log("Received data");
-        console.log(data);
-
         setItemList(data.items);
         setTotalCount(data.total_count);
         setCurrPage(curPage);

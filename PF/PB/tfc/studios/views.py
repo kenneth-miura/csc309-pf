@@ -202,8 +202,6 @@ class StudioListFilterView(APIView):
 
         serialized_lst = [StudioSerializer(i).data for i in filtered_lst]
 
-        print(serialized_lst)
-
         page_studio_lst = Paginator(serialized_lst, 10)
 
         pg = request.GET.get("page")
