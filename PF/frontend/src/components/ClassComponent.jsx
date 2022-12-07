@@ -97,12 +97,6 @@ export default function ClassComponent({ classInfo,  updateFilteredResults, hasS
     parseInt(classInfo.capacity_count);
   const currentUserEnrolled = classInfo.current_user_enrolled
   const enrollable = !currentUserEnrolled && remainingSpace > 0 && hasSubscription
-  console.log("______________________________________________")
-  console.log({currentUserEnrolled})
-  console.log({remainingSpace})
-  console.log({hasSubscription})
-  console.log({enrollable})
-  console.log("______________________________________________")
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
 

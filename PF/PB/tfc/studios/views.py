@@ -12,6 +12,7 @@ from classes.models import ClassOffering, ClassInstance, TimeInterval
 from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from django.db.models import Q
 from datetime import *
+from subscriptions.models import get_subscription_end_date
 import re
 
 """
@@ -107,6 +108,7 @@ class StudioListView(APIView, LimitOffsetPagination):
 
 class StudioListFilterClassInstanceView(APIView, LimitOffsetPagination):
     serializer_class = ClassInstanceSerializer
+    permission_classes = [IsAuthenticated]
 
 
     pagination_class = LimitOffsetPagination
@@ -127,17 +129,19 @@ class StudioListFilterClassInstanceView(APIView, LimitOffsetPagination):
 
             if k == "start_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
-                print("start time: ", formatted_time)
 
                 filters["time_interval__start_time__gte"] = formatted_time
 
             if k == "end_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
-                print("end time ", formatted_time)
 
                 filters["time_interval__end_time__lte"] = formatted_time
+            if k == "show_only_in_subscription" and raw_filters[k]=="true":
+                end_date = get_subscription_end_date(request.user.id)
+                filters["date__lt"] = end_date
         filtered_list = ClassInstance.objects.filter(**filters).order_by('date')
-        serialized_classes = [ClassInstanceSerializer(i).data for i in filtered_list]
+        serialized_classes = [ClassInstanceSerializer(i, context={'user': request.user}).data for i in filtered_list]
+
         page_class_lst = Paginator(serialized_classes, 10)
         pg = request.GET.get("page")
 

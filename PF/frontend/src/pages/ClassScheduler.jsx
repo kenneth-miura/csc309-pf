@@ -12,6 +12,8 @@ import ClassComponent from "../components/ClassComponent";
 import Navbar from "../components/Navbar";
 import PaginatedClassList from "../components/PaginatedClassList";
 import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
+import ErrorPage from './Error'
 
 function buildParams(fields) {
   const asArray = Object.entries(fields);
@@ -37,7 +39,9 @@ function ClassScheduler() {
   const [hasSubscription, setHasSubscription] = useState(false);
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
+  const isAuth = !!accessToken
   const bearer = "Bearer " + accessToken;
+  const navigate = useNavigate();
 
   useEffect(
     () => {
@@ -129,7 +133,9 @@ function ClassScheduler() {
     accessToken
   ]);
 
-  return (
+
+  //REDIRECT TO LOGIN IF YOU ARE NOT LOGGED IN
+  const renderOnSuccess = (
     <Box
       style={{
         display: "flex",
@@ -193,6 +199,12 @@ function ClassScheduler() {
       </Box>
     </Box>
   );
+
+  return (
+    <div>
+      {isAuth ? renderOnSuccess: <ErrorPage/>}
+    </div>
+  )
 }
 
 export default ClassScheduler;
