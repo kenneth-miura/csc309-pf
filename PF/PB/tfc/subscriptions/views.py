@@ -106,7 +106,17 @@ class SubscriptionPlanDetail(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
+class UpsertSubscriptionWithExistingPayment(APIView):
+    permission_classes=[IsAuthenticated]
 
+    def put(self, request, *args, **kwargs ):
+        subscription_query = Subscription.objects.filter(active=True).filter(user=request.user)
+        current_payment_query = PaymentMethod.objects.filter()
+
+        if subscription_query.exists():
+            pass
+        else:
+            pass
 class HasSubscription(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
@@ -130,6 +140,39 @@ class SubscriptionDetail(APIView):
         user_subscription_plan = get_object_or_404(Subscription, user=user, active=True).subscription_type
         data = {"price": user_subscription_plan.price, "period": user_subscription_plan.get_period_as_string()}
         return Response(data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        """
+            Only overwrites the subscription plan, not payment
+        """
+        subscription_query = Subscription.objects.filter(active=True).filter(user=request.user)
+        if subscription_query.exists():
+            # overwrite pre-existing
+            orig_subscription = subscription_query.get()
+            new_subscription_type_id = request.data["subscription_type_id"]
+            altered_subscription = orig_subscription.change_subscription_type(new_subscription_type_id)
+            serializer = SubscriptionSerializer(altered_subscription)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            subscription_serializer = SubscriptionSerializer(data=request.data,
+                                                            context={'user': request.user})
+            if subscription_serializer.is_valid():
+                subscription = subscription_serializer.save()
+                payment_method = subscription.payment_method
+
+                payment_amount = get_object_or_404(SubscriptionPlan,
+                                                pk=subscription.subscription_type.id).price
+
+                payment_history_serializer = PaymentHistorySerializer(
+                    data={"amount": payment_amount, "payment_method_id": payment_method.id, "user_id": request.user.pk})
+                if payment_history_serializer.is_valid():
+                    payment_history_serializer.save()
+                else:
+                    return Response(payment_history_serializer.errors,
+                                    status=status.HTTP_400_BAD_REQUEST)
+                return Response(subscription_serializer.data, status=status.HTTP_201_CREATED)
+            return Response(subscription_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def patch(self, request, *args, **kwargs):
         orig_subscription = get_object_or_404(Subscription, user=request.user, active=True)

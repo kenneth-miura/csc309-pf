@@ -4,6 +4,23 @@ import { Button, Card, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 //TODO: Create endpoint for EDIT subscription if exists, CREATE if not (THIS IS PUT)
 
+
+function SubscribeButton({setEnrolled, target_plan_id}){
+  function subscribe(){
+    const cookie = new Cookies();
+    const accessToken = cookie.get("accessToken");
+    const bearer = "Bearer " + accessToken;
+
+    fetch("http://127.0.0.1:8000/subscriptions/subscription/",
+    {
+      method: "PUT",
+      headers: {
+        Authorization: bearer
+      },
+      body: JSON.stringify({})
+    })
+  }
+}
 function UnsubscribeButton({ setEnrolled }) {
   function unsubscribe() {
     const cookie = new Cookies();
@@ -18,19 +35,21 @@ function UnsubscribeButton({ setEnrolled }) {
       if (response.status !== 200) {
         throw new Error(response.status);
       } else {
-        setEnrolled(true);
+        setEnrolled(false);
       }
     });
 
-    return (<Button
-      onClick={unsubscribe}
-    >
-      Cancel Plan
-    </Button>)
   }
+  return (<Button
+    onClick={unsubscribe}
+    variant="contained"
+    sx={{ maxHeight: "50px", width: "150px"}}
+  >
+    Cancel Plan
+  </Button>)
 }
 
-function PlanCard({ type, price, id, isEnrolled }) {
+function PlanCard({ type, price, id, isEnrolled, setEnrolled }) {
   return (
     <Card
       elevation={4}
@@ -46,8 +65,10 @@ function PlanCard({ type, price, id, isEnrolled }) {
     >
       <Typography variant="h3">{type}</Typography>
       <Typography variant="body">
-        {price} {type}
+        ${price} {type}
       </Typography>
+
+      {isEnrolled && <UnsubscribeButton setEnrolled={setEnrolled}/>}
     </Card>
   );
 }
@@ -60,11 +81,6 @@ export default function ShowPlanCards() {
   const [monthlyId, setMonthlyId] = useState(null);
   const [yearlyId, setYearlyId] = useState(null);
   const [error, setError] = useState(false);
-
-  console.log({ monthlyPrice });
-  console.log({ yearlyPrice });
-  console.log({ onMonthlyPlan });
-  console.log({ onYearlyPlan });
 
   useEffect(() => {
     const cookie = new Cookies();
@@ -125,12 +141,14 @@ export default function ShowPlanCards() {
           price={monthlyPrice}
           isEnrolled={onMonthlyPlan}
           id={monthlyId}
+          setEnrolled={setOnMonthlyPlan}
         />
         <PlanCard
           type="Yearly"
           price={yearlyPrice}
           isEnrolled={onYearlyPlan}
           id={yearlyId}
+          setEnrolled={setOnYearlyPlan}
         />
       </Stack>
     </Card>
