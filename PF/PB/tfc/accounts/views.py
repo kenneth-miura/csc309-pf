@@ -103,7 +103,8 @@ class EnrolledClassesView(APIView):
     serializer_class = ClassInstanceSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, user_id):
+    def get(self, request):
+        user_id = request.user.id
         today = datetime.now()
 
         enroll_objs = UserInstanceEnroll.objects.filter(user__id=user_id)
@@ -122,7 +123,7 @@ class EnrolledClassesView(APIView):
 
         filtered_history.sort(key=lambda tup: tup[1])
 
-        serialized_lst = [ClassInstanceSerializer(o[0]).data for o in filtered_history]
+        serialized_lst = [ClassInstanceSerializer(o[0], context={'user': request.user}).data for o in filtered_history]
 
         page_class_lst = Paginator(serialized_lst, 10)
 

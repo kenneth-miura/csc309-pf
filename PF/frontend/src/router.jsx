@@ -2,6 +2,7 @@ import React from 'react';
 import App from './App';
 import ErrorPage from './pages/Error'
 import LoginPage from './pages/Login';
+import ClassScheduler from './pages/ClassScheduler';
 import Profile from './pages/Profile'
 import EditProfilePage from './pages/EditProfile';
 import EditAvatarPage from './pages/EditAvatar';
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
         path: "/login",
         element: <LoginPage></LoginPage>,
     },
+    {
+      path: "/classes",
+      element: <ClassScheduler></ClassScheduler>
+     },
     {
     path: "/register",
     element: <RegisterForm></RegisterForm>,

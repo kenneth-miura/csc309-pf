@@ -12,6 +12,7 @@ from classes.models import ClassOffering, ClassInstance, TimeInterval
 from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from django.db.models import Q
 from datetime import *
+from subscriptions.models import get_subscription_end_date
 import re
 
 """
@@ -19,6 +20,7 @@ import re
 
     Below are views that deal with creating, retrieving, editing/updating and deleting studio objects.
 """
+
 
 
 class CreateStudioView(CreateAPIView):
@@ -91,7 +93,7 @@ class StudioListView(APIView, LimitOffsetPagination):
 
         # print(studios)
 
-        pg = request.GET.get("page")
+        pg = request.query_params["page"]
 
         if pg is not None:
             page_num = int(pg)
@@ -104,13 +106,18 @@ class StudioListView(APIView, LimitOffsetPagination):
             # Defaults to returning the whole list of studios if no page is given.
             return Response(studios)
 
-class StudioListFilterClassInstanceView(APIView):
+class StudioListFilterClassInstanceView(APIView, LimitOffsetPagination):
     serializer_class = ClassInstanceSerializer
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request, studio_id):
-        raw_filters = request.data
-        filters = {"class_offering__studio": studio_id}
+
+    pagination_class = LimitOffsetPagination
+    def get(self, request):
+        raw_filters = request.query_params
+        filters = {}
         for k in raw_filters:
+            if k == "studio":
+                filters["class_offering__studio__name"] = raw_filters[k]
             if k == "class_name":
                 filters["class_offering__name"] = raw_filters[k]
 
@@ -123,21 +130,25 @@ class StudioListFilterClassInstanceView(APIView):
             if k == "start_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
 
-                filters["time_interval__start_time"] = formatted_time
+                filters["time_interval__start_time__gte"] = formatted_time
 
             if k == "end_time":
                 formatted_time = datetime.strptime(raw_filters[k], '%H:%M').time()
 
-                filters["time_interval__end_time"] = formatted_time
-        print(filters)
-        filtered_list = ClassInstance.objects.filter(**filters)
-        serialized_classes = [ClassInstanceSerializer(i).data for i in filtered_list]
+                filters["time_interval__end_time__lte"] = formatted_time
+            if k == "show_only_in_subscription" and raw_filters[k]=="true":
+                end_date = get_subscription_end_date(request.user.id)
+                filters["date__lt"] = end_date
+        filtered_list = ClassInstance.objects.filter(**filters).order_by('date')
+        serialized_classes = [ClassInstanceSerializer(i, context={'user': request.user}).data for i in filtered_list]
+
         page_class_lst = Paginator(serialized_classes, 10)
         pg = request.GET.get("page")
 
         if pg is not None:
             page_num = int(pg)
-            return Response(page_class_lst.get_page(page_num).object_list)
+            page_class = page_class_lst.get_page(page_num)
+            return Response({ "has_next": page_class.has_next(), "total_count": page_class_lst.count, "num_pages": page_class_lst.num_pages, "items": page_class.object_list,})
         else:
             return Response(serialized_classes)
 
@@ -162,7 +173,6 @@ class StudioListFilterView(APIView):
 
     def get(self, request):
         raw_filters = request.query_params
-        print(raw_filters)
 
         filters = {}
 
@@ -237,7 +247,7 @@ class StudioListFilterClassesView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, studio_id):
-        raw_filters = request.data
+        raw_filters = request.query_params
 
         filters = {"studio": studio_id}
 
@@ -316,7 +326,7 @@ class StudioClassListView(APIView, LimitOffsetPagination):
 
     def get(self, request, studio_id):
         class_offerings = get_list_or_404(ClassOffering, studio_id=studio_id)
-        pg = request.GET.get("page")
+        pg = request.query_params["page"]
         offerings_to_instances = []
 
         for c in class_offerings:
