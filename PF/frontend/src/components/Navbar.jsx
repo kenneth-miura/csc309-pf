@@ -19,7 +19,7 @@ import Logout from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const pages = ["studios", "classes", "pricing"];
+const pages = ["studios", "classes", "subscription"];
 
 function Navbar({ isNotHomePage }) {
   const cookie = new Cookies();
