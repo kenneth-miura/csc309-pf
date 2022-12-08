@@ -10,7 +10,7 @@ class ClassOfferingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClassOffering
-        fields = ["name", "description", "coach", "capacity", "start_recursion_date", "end_recursion_date", "studio",
+        fields = ["id", "name", "description", "coach", "capacity", "start_recursion_date", "end_recursion_date", "studio",
                   "studio_id"]
 
 class TimeIntervalSerializer(serializers.ModelSerializer):
@@ -24,7 +24,16 @@ class TimeIntervalSerializer(serializers.ModelSerializer):
 class ClassInstanceSerializer(serializers.ModelSerializer):
     class_offering = ClassOfferingSerializer(read_only=True)
     time_interval = TimeIntervalSerializer(read_only=True)
+    current_user_enrolled = serializers.SerializerMethodField()
+
+    def get_current_user_enrolled(self, obj):
+        user = self.context.get("user")
+        if user:
+            print(obj.userinstanceenroll_set)
+            return obj.userinstanceenroll_set.filter(user=user).exists()
+        return None
 
     class Meta:
         model = ClassInstance
-        fields = ["date", "capacity_count", "class_offering", "time_interval"]
+        fields = ["id", "date", "capacity_count", "class_offering", "time_interval", "current_user_enrolled"]
+

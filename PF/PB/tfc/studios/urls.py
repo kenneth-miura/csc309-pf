@@ -15,7 +15,7 @@ urlpatterns = [
     path('<studio_id>/images/list/', RetrieveStudioImageView.as_view()),
     path('<studio_id>/classes/filter/', StudioListFilterClassesView.as_view()),
     path('<studio_id>/directions/', StudioMapsDirectionsView.as_view()),
-    path('<studio_id>/class_instance/filter/', StudioListFilterClassInstanceView.as_view())
+    path('class_instance/filter/', StudioListFilterClassInstanceView.as_view())
 
     # Below are depreciated URLs
     # path('new/', CreateStudioView.as_view()),

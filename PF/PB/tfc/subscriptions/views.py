@@ -108,6 +108,7 @@ class SubscriptionPlanDetail(APIView):
 
 
 class HasSubscription(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         user = self.request.user
 

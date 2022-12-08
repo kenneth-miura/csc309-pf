@@ -117,6 +117,11 @@ def will_have_active_subscription(user_id, date):
 
     return query.exists() and query.get().get_billing_period_end() > date
 
+def get_subscription_end_date(user_id):
+    query = Subscription.objects.filter(user=user_id).filter(active=True)
+    return query.get().get_billing_period_end()
+
+
 def has_active_subscription(user_id):
     query = Subscription.objects.filter(user=user_id).filter(active=True)
     date = datetime.date.today()

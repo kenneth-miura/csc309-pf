@@ -28,8 +28,6 @@ function Navbar({ isNotHomePage }) {
   const navigate = useNavigate();
 
   const isAuth = !!accessToken; // boolean value
-  // console.log(isAuth);
-  // console.log(accessToken)
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);

@@ -12,7 +12,7 @@ urlpatterns = [
     path('update/', UpdateUserProfileView.as_view()),
     path('<int:user_id>/schedule/', RetrieveClassScheduleView.as_view()),
     path('<int:user_id>/history/', RetrieveClassHistoryView.as_view()),
-    path('<int:user_id>/enrolled/', EnrolledClassesView.as_view())
+    path('enrolled/', EnrolledClassesView.as_view())
 ]
 
 # ABOUT:  path('login/', ...)
