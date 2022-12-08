@@ -4,7 +4,9 @@ from .views import (
     UpdatePaymentMethodView,
     GetPaymentHistory,
     SubscriptionPlanDetail,
-    HasSubscription
+    HasSubscription,
+    GetNextPayment
+
 )
 
 app_name = 'subscriptions'
@@ -14,5 +16,6 @@ urlpatterns = [
     path('payment_method/', UpdatePaymentMethodView.as_view()),
     path('payment_history/', GetPaymentHistory.as_view()),
     path("plans/", SubscriptionPlanDetail.as_view()),
-    path("has_subscription/", HasSubscription.as_view() )
+    path("has_subscription/", HasSubscription.as_view() ),
+    path("next_payment/", GetNextPayment.as_view() )
 ]

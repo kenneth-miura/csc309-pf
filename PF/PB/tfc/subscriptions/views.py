@@ -43,6 +43,19 @@ class UpdatePaymentMethodView(UpdateAPIView):
     def get_object(self):
         return get_object_or_404(PaymentMethod, subscription__user=self.request.user)
 
+class GetNextPayment(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user_id = self.request.user
+        subscription = get_object_or_404(Subscription, user=user_id, active=True)
+        subscription_plan = get_object_or_404(Subscription,
+                                            payment_method=subscription.payment_method)
+        future_payment = subscription_plan.subscription_type.price
+        return Response({
+            "price": future_payment,
+            "date": subscription_plan.next_payment_date
+        })
 
 class GetPaymentHistory(APIView, LimitOffsetPagination):
     """
