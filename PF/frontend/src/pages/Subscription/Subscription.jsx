@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import Cookies from "universal-cookie";
 import CurrentPlanCard from "./CurrentPlanCard";
-import { Paper } from "@mui/material";
 import Navbar from "../../components/Navbar";
+import { Box, Stack } from "@mui/system";
+import NextPaymentCard from "./NextPaymentCard";
 
 
 export default function Subscription() {
@@ -29,7 +30,11 @@ export default function Subscription() {
           paddingBottom: "20vh",
         }}
       >
-        <CurrentPlanCard />
+        <Stack spacing={2}>
+          <CurrentPlanCard />
+          <NextPaymentCard/>
+
+        </Stack>
       </Box>
     </div>
   );
