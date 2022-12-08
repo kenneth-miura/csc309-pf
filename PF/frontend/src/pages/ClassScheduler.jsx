@@ -150,7 +150,7 @@ function ClassScheduler() {
         flexDirection: "column",
       }}
     >
-      <Navbar position="sticky" isNotHomePage={false}></Navbar>
+      <Navbar position="sticky" isNotHomePage={true}></Navbar>
       <Box
         sx={{
           display: "flex",
