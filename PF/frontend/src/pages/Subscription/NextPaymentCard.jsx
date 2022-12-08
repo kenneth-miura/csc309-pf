@@ -22,7 +22,7 @@ export default function NextPaymentCard() {
       },
     })
       .then(response => {
-        if (response.status != 200) {
+        if (response.status !== 200) {
           setError(true);
           throw new Error(response.status);
         } else {

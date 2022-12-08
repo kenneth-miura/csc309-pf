@@ -5,6 +5,7 @@ import CurrentPlanCard from "./CurrentPlanCard";
 import Navbar from "../../components/Navbar";
 import { Box, Stack } from "@mui/system";
 import NextPaymentCard from "./NextPaymentCard";
+import ShowPlanCards from "./ShowPlansCard";
 
 
 export default function Subscription() {
@@ -30,9 +31,10 @@ export default function Subscription() {
           paddingBottom: "20vh",
         }}
       >
-        <Stack spacing={2}>
+        <Stack spacing={2} sx={{alignItems: "center"}}>
           <CurrentPlanCard />
           <NextPaymentCard/>
+          <ShowPlanCards/>
 
         </Stack>
       </Box>

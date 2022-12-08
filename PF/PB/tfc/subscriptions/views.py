@@ -91,8 +91,18 @@ class SubscriptionPlanDetail(APIView):
 
     def get(self, request, *args, **kwargs):
         subscription_plan = SubscriptionPlan.objects.all()
-        data = [{"price": plan.price, "period": plan.get_period_as_string()} for plan in subscription_plan]
+        data = {}
+        for plan in subscription_plan:
+            data[plan.get_period_as_string()]= {
+                "price": plan.price,
+                "id": plan.id
+            }
 
+        user = self.request.user
+        subscription_query = Subscription.objects.filter(user=user).filter(active=True)
+        if subscription_query.exists():
+            user_subscription_plan = subscription_query.get().subscription_type
+            data["user_plan"] = user_subscription_plan.get_period_as_string()
         return Response(data, status=status.HTTP_200_OK)
 
 
