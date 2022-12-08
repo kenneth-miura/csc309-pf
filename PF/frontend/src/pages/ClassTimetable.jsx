@@ -32,7 +32,7 @@ function ClassTimetablePage() {
               alignItems: "center",
             }}
           >
-            <ProfileInfoCard></ProfileInfoCard>
+            
           </Box>
         </div>
       )}
