@@ -12,6 +12,7 @@ import Cookies from "universal-cookie";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useState } from "react";
 const EnrollSingleClassButton = ({
   class_id,
   accessToken,
@@ -64,6 +65,7 @@ const EnrollFutureClassesButton = ({
   updateFilteredResults,
   enrollable,
 }) => {
+  const [clicked, setClicked] = useState(false)
   function enrollFutureClasses() {
     var bearer = "Bearer " + accessToken;
 
@@ -94,11 +96,15 @@ const EnrollFutureClassesButton = ({
 
   return (
     <Button
-      onClick={enrollFutureClasses}
+      onClick={() => {
+        setClicked(true)
+        enrollFutureClasses()
+      }
+      }
       variant="contained"
       size="small"
       sx={{ maxHeight: "50px", width: "150px" }}
-      disabled={!enrollable}
+      disabled={!enrollable || clicked}
     >
       Enroll All
     </Button>
