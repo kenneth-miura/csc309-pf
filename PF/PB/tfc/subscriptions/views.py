@@ -75,13 +75,13 @@ class GetPaymentHistory(APIView, LimitOffsetPagination):
         return self.get_paginated_response(response_data)
 
 class SubscriptionPlanDetail(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         subscription_plan = SubscriptionPlan.objects.all()
         data = [{"price": plan.price, "period": plan.get_period_as_string()} for plan in subscription_plan]
 
         return Response(data, status=status.HTTP_200_OK)
+
 
 
 class HasSubscription(APIView):
@@ -100,6 +100,12 @@ class SubscriptionDetail(APIView):
 
     def get_object(self, pk):
         return get_object_or_404(Subscription, pk=pk)
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        user_subscription_plan = get_object_or_404(Subscription, user=user, active=True).subscription_type
+        data = {"price": user_subscription_plan.price, "period": user_subscription_plan.get_period_as_string()}
+        return Response(data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         orig_subscription = get_object_or_404(Subscription, user=request.user, active=True)
