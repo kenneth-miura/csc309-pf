@@ -43,6 +43,16 @@ function ClassScheduler() {
   const bearer = "Bearer " + accessToken;
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const cookie = new Cookies();
+    const accessToken = cookie.get("accessToken");
+    const isAuth = !!accessToken
+    if(!isAuth){
+      navigate("/login")
+    }
+
+  }, [navigate])
+
   useEffect(
     () => {
       fetch("http://127.0.0.1:8000/subscriptions/has_subscription/",
@@ -114,8 +124,6 @@ function ClassScheduler() {
         return res.json();
       })
       .then(data => {
-        //TODO: add a field in backend that requests only classes that have
-        // dates before the end of the current subscription
         setFilteredResults(data.items);
         setNumPages(data.num_pages);
       })
@@ -142,7 +150,7 @@ function ClassScheduler() {
         flexDirection: "column",
       }}
     >
-      <Navbar position="sticky" isLoginPage={false}></Navbar>
+      <Navbar position="sticky" isNotHomePage={false}></Navbar>
       <Box
         sx={{
           display: "flex",
