@@ -15,6 +15,7 @@ import {
     RouterProvider,
     Route,
   } from "react-router-dom";
+import ClassTimetablePage from './pages/ClassTimetable';
 
 
 const router = createBrowserRouter([
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
     {
       path: "/studios",
       element: <StudioPage></StudioPage>
+    },
+    {
+      path: "/myaccount/timetable",
+      element: <ClassTimetablePage></ClassTimetablePage>
     }
 ]);
 
