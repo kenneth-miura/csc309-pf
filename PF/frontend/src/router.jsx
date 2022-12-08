@@ -6,6 +6,7 @@ import ClassScheduler from './pages/ClassScheduler';
 import Profile from './pages/Profile'
 import EditProfilePage from './pages/EditProfile';
 import EditAvatarPage from './pages/EditAvatar';
+import RegisterForm from './pages/Register'
 import StudioPage from './pages/Studio';
 
 import {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
     {
       path: "/classes",
       element: <ClassScheduler></ClassScheduler>
+     },
+    {
+    path: "/register",
+    element: <RegisterForm></RegisterForm>,
     },
     {
       path: "/myaccount",

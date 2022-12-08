@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
+import { NavLink } from "react-router-dom";
 
 function HomePage() {
   return (
@@ -65,7 +66,13 @@ function HomePage() {
                 marginBottom: "50px",
               }}
             >
-              <h3 style={{ margin: "0", padding: "0" }}>JOIN NOW</h3>
+            <NavLink
+                to={`/register`}
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                 <h3 style={{ margin: "0", padding: "0" }}>JOIN NOW</h3>
+              </NavLink>
+             
             </Button>
           </Card>
         </Box>
