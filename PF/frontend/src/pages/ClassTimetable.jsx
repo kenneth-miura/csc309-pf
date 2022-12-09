@@ -142,15 +142,16 @@ function ClassTimetablePage() {
   const pageSize = 10;
 
   const [currSchedPage, setCurrSchedPage] = useState(1);
+  const [currHistoryPage, setCurrHistoryPage] = useState(1);
   const [totalSchedCount, setTotalSchedCount] = useState(0);
+  const [totalHistoryCount, setTotalHistoryCount] = useState(0);
+
   const [classSchedList, setClassSchedList] = useState([]);
   const [classHistoryList, setclassHistoryList] = useState([]);
 
-  const [studioName, setStudioName] = useState("");
-  const [classOfferingName, setClassOfferingName] = useState("");
-  const [coachName, setCoachName] = useState("");
-  const [amenities, setAmenities] = useState("");
   const [currSchedItem, setCurrSchedItem] = useState(null);
+  const [currHistoryItem, setCurrHistoryItem] = useState(null);
+
 
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = (info) => {
@@ -163,7 +164,8 @@ function ClassTimetablePage() {
 
   useEffect(() => {
     fetchData(currSchedPage);
-  }, [currSchedPage]);
+    fetchHistoryData(currHistoryPage);
+  }, [currSchedPage, currHistoryPage]);
 
   const fetchData = (curPage) => {
     let bearer = "Bearer " + accessToken;
@@ -189,6 +191,38 @@ function ClassTimetablePage() {
         setClassSchedList(data.items);
         setTotalSchedCount(data.total_count);
         setCurrSchedPage(curPage);
+
+        console.log(data.items);
+      })
+      .catch((error) => {
+        // console.log(error);
+      });
+  };
+
+  const fetchHistoryData = (curHistoryPage) => {
+    let bearer = "Bearer " + accessToken;
+    let serverUrl = "http://127.0.0.1:8000/accounts/history/?page=" + curHistoryPage;
+
+    fetch(serverUrl, {
+      method: "GET",
+      headers: {
+        Authorization: bearer,
+        Accept: "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.status === 400) {
+          // TODO: figure out how to do validation lol
+          console.log("Failed to get data!");
+          throw new Error(response.status);
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        setclassHistoryList(data.items);
+        setTotalHistoryCount(data.total_count);
+        setCurrHistoryPage(currHistoryPage);
 
         console.log(data.items);
       })
@@ -224,7 +258,11 @@ function ClassTimetablePage() {
   };
 
   const handleChangePage = (event, value) => {
-    fetchData(value, studioName, classOfferingName, coachName, amenities);
+    fetchData(value);
+  };
+
+  const handleChangeHistoryPage = (event, value) => {
+    fetchHistoryData(value);
   };
 
   const handleUnenrollClass = (class_id) => {
@@ -311,12 +349,12 @@ function ClassTimetablePage() {
               aria-label="basic tabs example"
             >
               <Tab
-                style={{ color: "brown" }}
+                style={{ color: "brown", fontSize: "20px" }}
                 label="My Class Schedule"
                 {...a11yProps(0)}
               />
               <Tab
-                style={{ color: "brown" }}
+                style={{ color: "brown", fontSize: "20px"  }}
                 label="Class History"
                 {...a11yProps(1)}
               />
@@ -440,7 +478,7 @@ function ClassTimetablePage() {
               >
                 {!!currSchedItem && (
                   <Typography>
-                    <h2 style={{ color: "red" }}>
+                    <h2 style={{ color: "#d62828" }}>
                       {currSchedItem.class_offering.name}
                     </h2>
                   </Typography>
@@ -481,8 +519,68 @@ function ClassTimetablePage() {
               </DialogActions>
             </BootstrapDialog>
           </TabPanel>
+          {/* ******************************* THIS IS THE START OF THE CLASS HISTORY PAGE ******************************* */}
           <TabPanel value={value} index={1}>
-            PLACEHOLDER
+          <Grid
+              container
+              spacing={2}
+              style={{ width: "100vw", paddingLeft: "200px" }}
+            >
+              <Grid item xs={12} style={{ paddingRight: "200px" }}>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>Class Name</StyledTableCell>
+                        <StyledTableCell align="right">Coach</StyledTableCell>
+                        <StyledTableCell align="right">Date</StyledTableCell>
+                        <StyledTableCell align="right">Times</StyledTableCell>
+                        <StyledTableCell align="right">Studio</StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {classHistoryList.map((info, index) => (
+                        <StyledTableRow key={index}>
+                          <StyledTableCell component="th" scope="row">
+                            {info.class_offering.name}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {info.class_offering.coach}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {info.date}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {info.time_interval.start_time} to{" "}
+                            {info.time_interval.end_time}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {info.class_offering.studio.name}
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      ))}
+                    </TableBody>
+                    <TableFooter>
+                      <StyledTableRow>
+                        <StyledTableCell colSpan={8}>
+                          <Pagination
+                            count={Math.ceil(
+                              totalHistoryCount / (1.0 * pageSize)
+                            )}
+                            page={currHistoryPage}
+                            showFirstButton
+                            showLastButton
+                            variant="outlined"
+                            shape="rounded"
+                            onChange={handleChangeHistoryPage}
+                          />
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    </TableFooter>
+                  </Table>
+                </TableContainer>
+              </Grid>
+            </Grid>
           </TabPanel>
         </Box>
       </div>

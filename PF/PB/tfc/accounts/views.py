@@ -123,7 +123,8 @@ class EnrolledClassesView(APIView):
 
             combined_date = datetime.combine(c_instance.date, time_interval.start_time)
 
-            filtered_history.append((c_instance, combined_date))
+            if combined_date > today:
+                filtered_history.append((c_instance, combined_date))
 
         filtered_history.sort(key=lambda tup: tup[1])
 
