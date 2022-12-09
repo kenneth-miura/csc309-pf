@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Card, Box, Button } from "@mui/material";
 import Navbar from "../components/Navbar";
 import ProfileInfoCard from "../components/ProfileInfo";
@@ -12,6 +12,12 @@ function ProfilePage() {
 
   const isAuth = !!accessToken; // boolean value
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuth) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div>

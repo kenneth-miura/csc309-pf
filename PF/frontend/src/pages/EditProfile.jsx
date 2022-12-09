@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Card, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -14,6 +14,13 @@ function EditProfilePage() {
 
   const isAuth = !!accessToken; // boolean value
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuth) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
 
   return (
     <div>

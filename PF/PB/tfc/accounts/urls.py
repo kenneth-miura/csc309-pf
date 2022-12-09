@@ -10,8 +10,8 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('info/', RetrieveUserView.as_view()),
     path('update/', UpdateUserProfileView.as_view()),
-    path('<int:user_id>/schedule/', RetrieveClassScheduleView.as_view()),
-    path('<int:user_id>/history/', RetrieveClassHistoryView.as_view()),
+    path('schedule/', RetrieveClassScheduleView.as_view()),
+    path('history/', RetrieveClassHistoryView.as_view()),
     path('enrolled/', EnrolledClassesView.as_view())
 ]
 
