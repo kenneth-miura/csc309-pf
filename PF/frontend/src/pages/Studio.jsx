@@ -285,8 +285,8 @@ function StudioPage() {
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
-            <Grid container spacing={2} style={{width: "100vw"}}>
-            <Grid item xs={12} md={3}>
+            <Grid container spacing={2} style={{width: "100vw", paddingLeft: "200px"}}>
+            <Grid item xs={12} md={3} style={{display: "flex"}}>
             <Stack>
               <FormControl style={{ width: "300px" }}>
                 <Input
@@ -357,8 +357,8 @@ function StudioPage() {
               </div>
             </Stack>
             </Grid>
-            <Grid  item xs={12} md={9}>
-            <TableContainer component={Paper} style={{}}>
+            <Grid  item xs={12} md={9} style={{paddingRight: "200px"}}>
+            <TableContainer component={Paper} >
               <Table sx={{ minWidth: 700 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
@@ -430,11 +430,12 @@ function StudioPage() {
               </BootstrapDialogTitle>
               <DialogContent dividers>
                 <Typography component={"span"} gutterBottom>
-                  Address:{" "}
+                  <b>Address:{" "}</b>
                   {!!currItem && <Typography>{currItem.address}</Typography>}
+                  <br></br>
                 </Typography>
                 <Typography component={"span"} gutterBottom>
-                  Phone Number:{" "}
+                  <b>Phone Number:{" "}</b>
                   {!!currItem && <Typography>{currItem.phone_num}</Typography>}
                 </Typography>
               </DialogContent>

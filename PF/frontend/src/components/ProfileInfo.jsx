@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Tab, Card, Box, Button, FormControl, Input, InputLabel, Stack } from "@mui/material";
+import {
+  Tab,
+  Card,
+  Box,
+  Button,
+  FormControl,
+  Input,
+  InputLabel,
+  Stack,
+} from "@mui/material";
 import Cookies from "universal-cookie";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Avatar, Grid } from "@mui/material";
 
 function ProfileInfoCard(props) {
@@ -85,38 +94,40 @@ function ProfileInfoCard(props) {
               <Grid container spacing={2}>
                 <Grid>
                   <Stack>
-                  <Avatar
-                    sx={{
-                      width: "100px",
-                      height: "100px",
-                      marginTop: "50px",
-                      marginLeft: "80px",
-                    }}
-                    alt={firstName}
-                    src={avatar}
-                  ></Avatar>
-                  <Button
-                    onClick={handleEditProfileClick}
-                    variant="secondary"
-                    style={{
-                      color: "#d62828",
-                      marginLeft: "50px",
-                      marginTop: "50px"
-                    }}
-                  >
-                    Edit Profile
-                  </Button>
-                  <Button
-                    onClick={() => {navigate("/myaccount/avatar")}}
-                    variant="secondary"
-                    style={{
-                      color: "#d62828",
-                      marginLeft: "50px",
-                      marginTop: "20px"
-                    }}
-                  >
-                    Upload Avatar
-                  </Button>
+                    <Avatar
+                      sx={{
+                        width: "100px",
+                        height: "100px",
+                        marginTop: "50px",
+                        marginLeft: "80px",
+                      }}
+                      alt={firstName}
+                      src={avatar}
+                    ></Avatar>
+                    <Button
+                      onClick={handleEditProfileClick}
+                      variant="secondary"
+                      style={{
+                        color: "#d62828",
+                        marginLeft: "50px",
+                        marginTop: "50px",
+                      }}
+                    >
+                      Edit Profile
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate("/myaccount/avatar");
+                      }}
+                      variant="secondary"
+                      style={{
+                        color: "#d62828",
+                        marginLeft: "50px",
+                        marginTop: "20px",
+                      }}
+                    >
+                      Upload Avatar
+                    </Button>
                   </Stack>
                 </Grid>
                 <Grid>
@@ -161,6 +172,36 @@ function ProfileInfoCard(props) {
                   </p>
                 </Grid>
               </Grid>
+            </Card>
+            <Card
+              style={{
+                width: "500px",
+                height: "300px",
+                marginLeft: "10px",
+                display: "flex",
+              }}
+            >
+              <div
+                style={{
+                  marginTop: "100px",
+                  marginLeft: "110px",
+                }}
+              >
+                <Button
+                  variant="primary"
+                  style={{
+                    color: "white",
+                    backgroundColor: "#d62828",
+                  }}
+                >
+                  <NavLink
+                    to={`/myaccount/timetable`}
+                    style={{ color: "white", textDecoration: "none" }}
+                  >
+                    <h3>Check my class Schedule</h3>
+                  </NavLink>
+                </Button>
+              </div>
             </Card>
           </div>
         </Card>
