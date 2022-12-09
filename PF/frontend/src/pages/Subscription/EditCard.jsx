@@ -1,6 +1,5 @@
 import React from "react";
 import Card from "react-credit-cards-2";
-import "./styles.css";
 import {
   formatCreditCardNumber,
   formatCVC,
@@ -16,7 +15,11 @@ function getFullDate(concatenatedDate){
   const month = split_dates[0]
   const day = split_dates[1]
   return dayjs().year() + "-" + month + "-" + day
+}
 
+function getFullCardNumber(rawCardNumber){
+  const combinedNumber = rawCardNumber.replace(/\s/g,'')
+  return parseInt(combinedNumber)
 }
 
 export default class EditCard extends React.Component {
@@ -57,7 +60,7 @@ export default class EditCard extends React.Component {
         Authorization: bearer,
       },
       body: JSON.stringify({
-        card_number: parseInt(number),
+        card_number: getFullCardNumber(number),
         security_code: parseInt(cvc),
         name: name,
         expiration: getFullDate(expiry),
@@ -131,6 +134,9 @@ export default class EditCard extends React.Component {
   render() {
     const { name, number, expiry, cvc, focused, issuer, has_payment_method } =
       this.state;
+
+    const state = this.state
+    console.log({state})
 
     const EditCardText = () => <h1>Overwrite your payment details</h1>;
     const SubmitCardText = () => <h1>Enter your payment details</h1>;
