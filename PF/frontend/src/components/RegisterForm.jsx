@@ -18,6 +18,7 @@ function RegisterForm(props) {
 
   const [passwordNotMatch, setPasswordNotMatch] = useState(false);
   const [formNotFilledIn, setFormNotFilledIn] = useState(false);
+  const [accountAlreadyExist, setAccountAlreadyExist] = useState(false);
 
   useEffect(() => {
     if (password1 !== password2) {
@@ -52,7 +53,12 @@ function RegisterForm(props) {
           console.log("Error in form!");
           setFormNotFilledIn(true);
           throw new Error(response.status);
-        } else {
+        } else if ( response.status === 409 ) {
+          console.log("Username already exist!");
+          setAccountAlreadyExist(true);
+          throw new Error(response.status);
+        } 
+        else {
           return response.json();
           setFormNotFilledIn(false);
         }
@@ -195,6 +201,11 @@ function RegisterForm(props) {
                 {passwordNotMatch && (
                   <p style={{ color: "red" }}>
                     Passwords do not match.
+                  </p>
+                )}
+                {accountAlreadyExist && (
+                  <p style={{ color: "red" }}>
+                    The username already exists.
                   </p>
                 )}
                 <Button
