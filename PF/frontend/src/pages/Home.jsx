@@ -1,8 +1,14 @@
 import * as React from "react";
 import { Card, Box, Button } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import Cookies from "universal-cookie";
 
 function HomePage() {
+  const cookie = new Cookies();
+  const accessToken = cookie.get("accessToken");
+
+  const isAuth = !!accessToken; // boolean value
+
   return (
     <div id="container" style={{ display: "flex", flexDirection: "column" }}>
       <Box
@@ -57,6 +63,7 @@ function HomePage() {
         </Box>
         <Box>
           <Card id="joinCard" style={{ boxShadow: "none" }}>
+            { !!!isAuth &&
             <Button
               id="joinButton"
               variant="contained"
@@ -74,6 +81,7 @@ function HomePage() {
               </NavLink>
              
             </Button>
+            }
           </Card>
         </Box>
       </Box>
