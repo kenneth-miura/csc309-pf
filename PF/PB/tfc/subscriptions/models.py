@@ -39,6 +39,8 @@ class SubscriptionPlan(models.Model):
 class PaymentMethod(models.Model):
     card_number = models.PositiveIntegerField()
     security_code = models.PositiveIntegerField()
+    name = models.CharField(max_length=200)
+    expiration = models.DateField()
     user = models.OneToOneField(to=TFCUser, on_delete=CASCADE, related_name="payment_method")
 
 

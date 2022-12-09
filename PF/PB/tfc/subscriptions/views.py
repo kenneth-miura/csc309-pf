@@ -43,6 +43,7 @@ class PaymentMethodView(GenericAPIView, mixins.UpdateModelMixin, mixins.Retrieve
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
     def put(self, request, *args, **kwargs):
+        print(request.data)
         return self.update(request, *args, **kwargs)
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
@@ -52,6 +53,7 @@ class PaymentMethodView(GenericAPIView, mixins.UpdateModelMixin, mixins.Retrieve
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print(request.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -68,6 +70,7 @@ class GetNextPayment(APIView):
             "price": future_payment,
             "date": subscription_plan.next_payment_date
         })
+
 
 class GetPaymentHistory(APIView, LimitOffsetPagination):
     """
@@ -129,6 +132,12 @@ class HasSubscription(APIView):
 
         return Response({"has_active_subscription": has_active_subscription(user.pk)})
 
+
+class HasPaymentMethod(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        return Response({"has_payment_method": has_payment_method(user.pk) })
 
 class SubscriptionDetail(APIView):
     """

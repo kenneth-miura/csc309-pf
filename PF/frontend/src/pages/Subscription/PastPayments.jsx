@@ -49,7 +49,7 @@ export default function PastPayments() {
 
 
   return (
-    <TableContainer  sx={{ minWidth: "900px", maxHeight: 300 }} component={Paper}>
+    <TableContainer  sx={{ minWidth: "400px", maxHeight: 300 }} component={Paper}>
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>

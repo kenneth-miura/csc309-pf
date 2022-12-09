@@ -18,14 +18,17 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
     user = TFCUserSerializer(read_only=True)
     class Meta:
         model = PaymentMethod
-        fields = ["card_number", "security_code", "user"]
+        fields = ["card_number", "security_code", "name", "expiration", "user"]
     def create(self, validated_data):
+        print(validated_data)
         user = self.context.get("user")
 
         card_number = validated_data['card_number']
         security_code = validated_data['security_code']
+        name = validated_data['name']
+        expiration = validated_data['expiration']
 
-        return PaymentMethod.objects.create(user=user, card_number=card_number, security_code=security_code)
+        return PaymentMethod.objects.create(user=user, card_number=card_number, security_code=security_code, name=name, expiration = expiration)
 
 
 
