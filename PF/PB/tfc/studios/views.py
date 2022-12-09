@@ -13,7 +13,6 @@ from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from django.db.models import Q
 from datetime import *
 from subscriptions.models import get_subscription_end_date
-import re
 
 """
     STUDIO
@@ -139,7 +138,8 @@ class StudioListFilterClassInstanceView(APIView, LimitOffsetPagination):
             if k == "show_only_in_subscription" and raw_filters[k]=="true":
                 end_date = get_subscription_end_date(request.user.id)
                 filters["date__lt"] = end_date
-        filtered_list = ClassInstance.objects.filter(**filters).order_by('date')
+        today = date.today()
+        filtered_list = ClassInstance.objects.filter(**filters).filter(date__gt=today).order_by('date')
         serialized_classes = [ClassInstanceSerializer(i, context={'user': request.user}).data for i in filtered_list]
 
         page_class_lst = Paginator(serialized_classes, 10)
