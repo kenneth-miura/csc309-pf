@@ -6,7 +6,7 @@ import CardTextOnFail from "./CardTextOnFail";
 function getRate(period, price) {
   return price + " " + period;
 }
-export default function CurrentPlanCard({}) {
+export default function CurrentPlanCard() {
   const [price, setPrice] = useState(0);
   const [period, setPeriod] = useState("");
   const [error, setError] = useState(false);
@@ -24,7 +24,7 @@ export default function CurrentPlanCard({}) {
       },
     })
       .then(response => {
-        if (response.status != 200) {
+        if (response.status !== 200) {
           setError(true);
           throw new Error(response.status);
         } else {

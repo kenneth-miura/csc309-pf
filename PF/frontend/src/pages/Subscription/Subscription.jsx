@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import CurrentPlanCard from "./CurrentPlanCard";
 import Navbar from "../../components/Navbar";
@@ -7,8 +7,10 @@ import { Box, Stack } from "@mui/system";
 import NextPaymentCard from "./NextPaymentCard";
 import ShowPlanCards from "./ShowPlansCard";
 
-
 export default function Subscription() {
+  const [onMonthlyPlan, setOnMonthlyPlan] = useState(false);
+  const [onYearlyPlan, setOnYearlyPlan] = useState(false);
+
   const navigate = useNavigate();
   useEffect(() => {
     const cookie = new Cookies();
@@ -18,6 +20,7 @@ export default function Subscription() {
       navigate("/login");
     }
   }, [navigate]);
+
 
   return (
     <div>
@@ -31,11 +34,17 @@ export default function Subscription() {
           paddingBottom: "20vh",
         }}
       >
-        <Stack spacing={2} sx={{alignItems: "center"}}>
-          <CurrentPlanCard />
-          <NextPaymentCard/>
-          <ShowPlanCards/>
-
+        <Stack spacing={2} sx={{ alignItems: "center" }}>
+          { onMonthlyPlan && <CurrentPlanCard />}
+          { onYearlyPlan && <CurrentPlanCard />}
+          { onMonthlyPlan && <NextPaymentCard />}
+          { onYearlyPlan && <NextPaymentCard/>}
+          <ShowPlanCards
+            onMonthlyPlan={onMonthlyPlan}
+            setOnMonthlyPlan={setOnMonthlyPlan}
+            onYearlyPlan={onYearlyPlan}
+            setOnYearlyPlan={setOnYearlyPlan}
+          />
         </Stack>
       </Box>
     </div>

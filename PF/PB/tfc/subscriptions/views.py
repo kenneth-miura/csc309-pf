@@ -61,7 +61,7 @@ class GetNextPayment(APIView):
     def get(self, request, *args, **kwargs):
         user = self.request.user
         subscription_plan = get_object_or_404(Subscription,
-                                            user =user)
+                                            user =user, active=True)
         future_payment = subscription_plan.subscription_type.price
         return Response({
             "price": future_payment,
@@ -117,26 +117,6 @@ class SubscriptionPlanDetail(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class UpsertSubscription(APIView):
-    permission_classes=[IsAuthenticated]
-
-    def put(self, request, *args, **kwargs ):
-        if not has_payment_method(request.user.id):
-            return Response({"Message": "User has no payment method"},
-                            status=status.HTTP_409_CONFLICT)
-        if "subscription_type_id" not in self.request.data:
-            return Response({"Message": "Invalid fields"}, status=status.HTTP_400_BAD_REQUEST)
-
-        subscription_query = Subscription.objects.filter(active=True).filter(user=request.user)
-
-        if subscription_query.exists():
-            subscription = subscription_query.get()
-            changed = subscription.change_subscription_type()
-            serializer = SubscriptionSerializer(changed)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        else:
-            return SubscriptionDetail.post(self, request, *args, **kwargs)
 class HasSubscription(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):

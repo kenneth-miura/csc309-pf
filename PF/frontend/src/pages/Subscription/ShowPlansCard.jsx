@@ -2,26 +2,43 @@ import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { Button, Card, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-//TODO: Create endpoint for EDIT subscription if exists, CREATE if not (THIS IS PUT)
 
 
-function SubscribeButton({setEnrolled, target_plan_id}){
+function SubscribeButton({setEnrolled, setOtherEnrolled, target_plan_id}){
   function subscribe(){
     const cookie = new Cookies();
     const accessToken = cookie.get("accessToken");
     const bearer = "Bearer " + accessToken;
 
+
     fetch("http://127.0.0.1:8000/subscriptions/subscription/",
     {
       method: "PUT",
       headers: {
-        Authorization: bearer
+        Authorization: bearer,
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({"subscription_type_id": target_plan_id})
+    }).then(response => {
+      if (response.status === 200 || response.status === 201) {
+        setEnrolled(true);
+        setOtherEnrolled(false);
+      } else {
+        throw new Error(response.status);
+      }
     })
   }
+
+  return (<Button
+    onClick={subscribe}
+    variant="contained"
+    sx={{ maxHeight: "50px", width: "150px"}}
+  >
+    Enroll
+  </Button>)
 }
-function UnsubscribeButton({ setEnrolled }) {
+function UnsubscribeButton({ setEnrolled}) {
   function unsubscribe() {
     const cookie = new Cookies();
     const accessToken = cookie.get("accessToken");
@@ -49,7 +66,7 @@ function UnsubscribeButton({ setEnrolled }) {
   </Button>)
 }
 
-function PlanCard({ type, price, id, isEnrolled, setEnrolled }) {
+function PlanCard({ type, price, id, isEnrolled, setEnrolled, setOtherEnrolled}) {
   return (
     <Card
       elevation={4}
@@ -69,18 +86,18 @@ function PlanCard({ type, price, id, isEnrolled, setEnrolled }) {
       </Typography>
 
       {isEnrolled && <UnsubscribeButton setEnrolled={setEnrolled}/>}
+      {!isEnrolled && <SubscribeButton setEnrolled={setEnrolled} target_plan_id={id} setOtherEnrolled={setOtherEnrolled}/>}
     </Card>
   );
 }
 
-export default function ShowPlanCards() {
+export default function ShowPlanCards({onMonthlyPlan, setOnMonthlyPlan, onYearlyPlan, setOnYearlyPlan}) {
   const [monthlyPrice, setMonthlyPrice] = useState(0);
   const [yearlyPrice, setYearlyPrice] = useState(0);
-  const [onMonthlyPlan, setOnMonthlyPlan] = useState(false);
-  const [onYearlyPlan, setOnYearlyPlan] = useState(false);
   const [monthlyId, setMonthlyId] = useState(null);
   const [yearlyId, setYearlyId] = useState(null);
   const [error, setError] = useState(false);
+
 
   useEffect(() => {
     const cookie = new Cookies();
@@ -120,7 +137,7 @@ export default function ShowPlanCards() {
         }
       })
       .catch(error => console.error(error));
-  }, []);
+  }, [setOnYearlyPlan, setOnMonthlyPlan]);
 
   return (
     <Card
@@ -142,6 +159,7 @@ export default function ShowPlanCards() {
           isEnrolled={onMonthlyPlan}
           id={monthlyId}
           setEnrolled={setOnMonthlyPlan}
+          setOtherEnrolled={setOnYearlyPlan}
         />
         <PlanCard
           type="Yearly"
@@ -149,6 +167,7 @@ export default function ShowPlanCards() {
           isEnrolled={onYearlyPlan}
           id={yearlyId}
           setEnrolled={setOnYearlyPlan}
+          setOtherEnrolled={setOnMonthlyPlan}
         />
       </Stack>
     </Card>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import CardTextOnFail from "./CardTextOnFail";
 
-export default function NextPaymentCard() {
+export default function NextPaymentCard({rerender}) {
   const [price, setPrice] = useState(0);
   const [date, setDate] = useState("");
   const [error, setError] = useState(false);
@@ -34,7 +34,7 @@ export default function NextPaymentCard() {
         setDate(data.date);
       })
       .catch(error => console.error(error));
-  }, []);
+  }, [rerender]);
 
   const CardTextOnSuccess = () => {
     return (
