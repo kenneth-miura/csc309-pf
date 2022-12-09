@@ -145,6 +145,7 @@ function RegisterForm(props) {
                   <Input
                     name="password1"
                     placeholder="Password"
+                    type="password"
                     style={{ paddingTop: "10px" }}
                     onChange={(e) => {
                       setPassword1(e.target.value);
@@ -156,6 +157,7 @@ function RegisterForm(props) {
                 <FormControl style={{ width: "300px", paddingTop: "10px" }}>
                   <Input
                     name="password2"
+                    type="password"
                     placeholder="Confirm Password"
                     style={{ paddingTop: "10px" }}
                     onChange={(e) => {
