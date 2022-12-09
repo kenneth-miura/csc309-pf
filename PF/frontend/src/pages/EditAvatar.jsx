@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import { Card, Box, Button, Input, InputLabel, Stack } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import Navbar from "../components/Navbar";
@@ -13,6 +13,12 @@ function EditAvatarPage() {
 
   const isAuth = !!accessToken; // boolean value
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuth) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleOnClick = () => {
     const formData = new FormData();

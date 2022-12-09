@@ -51,7 +51,7 @@ const EnrollSingleClassButton = ({
       onClick={enrollSingleClass}
       variant="contained"
       size="small"
-      sx={{ height: "50px", width: "150px" }}
+      sx={{ height: "50px", width: "150px", backgroundColor: "#d62929" }}
       disabled={!enrollable}
     >
       Enroll
@@ -103,7 +103,7 @@ const EnrollFutureClassesButton = ({
       }
       variant="contained"
       size="small"
-      sx={{ maxHeight: "50px", width: "150px" }}
+      sx={{ maxHeight: "50px", width: "150px", backgroundColor: "#990d00"  }}
       disabled={!enrollable || clicked}
     >
       Enroll All
