@@ -6,17 +6,19 @@ from rest_framework.generics import RetrieveAPIView, CreateAPIView, UpdateAPIVie
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from .serializers import TFCUserSerializer
 from .models import TFCUser
 from classes.models import ClassOffering, UserInstanceEnroll, ClassInstance, TimeInterval
 from classes.serializers import ClassOfferingSerializer, ClassInstanceSerializer
 from datetime import *
+from rest_framework import mixins
 
 
 # Create your views here.
 
 # This takes a POST request.
-class CreateUserView(CreateAPIView):
+class CreateUserView(APIView):
     """
     Registers a new user.
 
@@ -24,6 +26,16 @@ class CreateUserView(CreateAPIView):
         `username`, `password`, `email`, `first_name`, `last_name`, `phone_number`, `avatar` - an Image
     """
     serializer_class = TFCUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = TFCUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if "username" in request.data and TFCUser.objects.filter(username=request.data["username"]).exists:
+            return Response({"Message": "User already exists"}, status=status.HTTP_409_CONFLICT)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class RetrieveUserView(RetrieveAPIView):

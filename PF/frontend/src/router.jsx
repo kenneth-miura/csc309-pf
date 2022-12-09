@@ -8,6 +8,7 @@ import EditProfilePage from './pages/EditProfile';
 import EditAvatarPage from './pages/EditAvatar';
 import RegisterForm from './pages/Register'
 import StudioPage from './pages/Studio';
+import Subscription from './pages/Subscription/Subscription';
 
 import {
     createBrowserRouter,
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
     {
       path: "/studios",
       element: <StudioPage></StudioPage>
+    },
+    {
+      path: "/subscription",
+      element: <Subscription/>
     },
     {
       path: "/myaccount/timetable",

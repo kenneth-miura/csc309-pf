@@ -5,6 +5,6 @@ from .models import SubscriptionPlan, Subscription, PaymentHistory, PaymentMetho
 admin.site.register(SubscriptionPlan)
 
 # Uncomment to test
-admin.site.register(Subscription)
-admin.site.register(PaymentHistory)
-admin.site.register(PaymentMethod)
+#admin.site.register(Subscription)
+#admin.site.register(PaymentHistory)
+#admin.site.register(PaymentMethod)
