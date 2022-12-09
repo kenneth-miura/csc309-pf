@@ -79,9 +79,9 @@ class RetrieveClassScheduleView(APIView):
 
         for s in schedule:
             try:
-                time_interval = TimeInterval.objects.filter(class_offering=s).first()
+                time_interval = TimeInterval.objects.get(class_offering=s)
             except MultipleObjectsReturned:
-                time_interval = TimeInterval.objects.get(class_offering=s)[0]
+                time_interval = TimeInterval.objects.filter(class_offering=s).first()
 
             schedule_sorted.append((s, time_interval.day, time_interval.start_time))
 
@@ -124,9 +124,9 @@ class EnrolledClassesView(APIView):
             c_offering = c.class_offering
 
             try:
-                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
+                time_interval = TimeInterval.objects.get(class_offering=c_offering)
             except MultipleObjectsReturned:
-                time_interval = TimeInterval.objects.get(class_offering=c_offering)[0]
+                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
 
             combined_date = datetime.combine(c_instance.date, time_interval.start_time)
 
@@ -177,9 +177,9 @@ class RetrieveClassHistoryView(APIView):
             c_offering = c.class_offering
 
             try:
-                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
+                time_interval = TimeInterval.objects.get(class_offering=c_offering)
             except MultipleObjectsReturned:
-                time_interval = TimeInterval.objects.get(class_offering=c_offering).first()
+                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
 
             combined_date = datetime.combine(c_instance.date, time_interval.start_time)
 
