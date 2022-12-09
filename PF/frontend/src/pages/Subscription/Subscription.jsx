@@ -37,7 +37,7 @@ export default function Subscription() {
         }}
       >
         <Stack spacing={1} sx={{ alignItems: "center" }}>
-          <Box
+          { (onMonthlyPlan || onYearlyPlan) && <Box
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -54,7 +54,7 @@ export default function Subscription() {
               {onYearlyPlan && <NextPaymentCard />}
 
             </Stack>
-          </Box>
+          </Box>}
           <ShowPlanCards
             onMonthlyPlan={onMonthlyPlan}
             setOnMonthlyPlan={setOnMonthlyPlan}
