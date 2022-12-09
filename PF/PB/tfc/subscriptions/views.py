@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import mixins
+from django.core.paginator import Paginator
 
 
 def cancel_user_subscription(user):
@@ -73,7 +74,7 @@ class GetPaymentHistory(APIView, LimitOffsetPagination):
     Retrieve payment history and future payment for the current user
 
     Params:
-        `?limit=` - specifies limit per page of the list of payments
+        `?page=` - Specifies the page # of the list of studios.
     """
     permission_classes = [IsAuthenticated]
 
@@ -82,21 +83,25 @@ class GetPaymentHistory(APIView, LimitOffsetPagination):
 
         payment_historys = get_list_or_404(PaymentHistory,
                                             user = user_id)
-        paginated_payment_historys = self.paginate_queryset(payment_historys, request, view=self)
+        serialized_payment_history = [PaymentHistorySerializer(payment_history).data for payment_history in payment_historys]
+        page_payment_history_lst = Paginator(serialized_payment_history, 10)
+        pg = request.GET.get("page")
+
+        if pg is not None:
+            page_num = int(pg)
+            curr_page = page_payment_history_lst.get_page(page_num)
+            return Response({
+                "has_next": curr_page.has_next(),
+                "total_count": page_payment_history_lst.count,
+                "num_pages": page_payment_history_lst.num_pages,
+                "items": curr_page.object_list
+            })
+        else:
+            return Response(serialized_payment_history)
 
 
-        payment_history_serializer = PaymentHistorySerializer(paginated_payment_historys,
-                                                              many=True)
-        response_data = {"payment_history": payment_history_serializer.data}
-        if has_active_subscription(user_id):
-            subscription = get_object_or_404(Subscription, user=user_id, active=True)
-            subscription_plan = get_object_or_404(Subscription,
-                                                payment_method=user_id.payment_method)
-            future_payment = subscription_plan.subscription_type.price
-            response_data["future_payment"] = {"price": future_payment,
-                                                "date": subscription_plan.next_payment_date}
 
-        return self.get_paginated_response(response_data)
+
 
 class SubscriptionPlanDetail(APIView):
 

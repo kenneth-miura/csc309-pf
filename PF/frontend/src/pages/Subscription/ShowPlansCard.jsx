@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { Button, Card, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
+import CardTextOnFail from "./CardTextOnFail";
 
 
 function SubscribeButton({setEnrolled, setOtherEnrolled, target_plan_id}){
@@ -139,19 +140,7 @@ export default function ShowPlanCards({onMonthlyPlan, setOnMonthlyPlan, onYearly
       .catch(error => console.error(error));
   }, [setOnYearlyPlan, setOnMonthlyPlan]);
 
-  return (
-    <Card
-      elevation={4}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "900px",
-        height: "450px",
-        padding: "30px",
-      }}
-    >
+  const RenderedOnSuccess = () => (
       <Stack spacing={2} direction="row">
         <PlanCard
           type="Monthly"
@@ -170,6 +159,21 @@ export default function ShowPlanCards({onMonthlyPlan, setOnMonthlyPlan, onYearly
           setOtherEnrolled={setOnMonthlyPlan}
         />
       </Stack>
+  )
+   return (
+    <Card
+      elevation={4}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "900px",
+        height: "450px",
+        padding: "30px",
+      }}
+    >
+      {error ? <CardTextOnFail/>: <RenderedOnSuccess/>}
     </Card>
   );
 }

@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import { Box, Stack } from "@mui/system";
 import NextPaymentCard from "./NextPaymentCard";
 import ShowPlanCards from "./ShowPlansCard";
+import PastPayments from "./PastPayments";
 
 export default function Subscription() {
   const [onMonthlyPlan, setOnMonthlyPlan] = useState(false);
@@ -45,6 +46,7 @@ export default function Subscription() {
             onYearlyPlan={onYearlyPlan}
             setOnYearlyPlan={setOnYearlyPlan}
           />
+          <PastPayments/>
         </Stack>
       </Box>
     </div>
