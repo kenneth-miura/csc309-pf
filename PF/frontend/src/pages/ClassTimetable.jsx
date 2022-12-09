@@ -9,7 +9,7 @@ import {
   InputLabel,
   TableFooter,
 } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import StudioMap from "../components/StudioMap";
 import Cookies from "universal-cookie";
@@ -130,6 +130,7 @@ function a11yProps(index) {
 function ClassTimetablePage() {
   const cookie = new Cookies();
   const accessToken = cookie.get("accessToken");
+  const navigate = useNavigate();
 
   const isAuth = !!accessToken; // boolean value
 
@@ -152,7 +153,6 @@ function ClassTimetablePage() {
   const [currSchedItem, setCurrSchedItem] = useState(null);
   const [currHistoryItem, setCurrHistoryItem] = useState(null);
 
-
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = (info) => {
     setOpen(true);
@@ -161,6 +161,16 @@ function ClassTimetablePage() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    const cookie = new Cookies();
+    const accessToken = cookie.get("accessToken");
+    const isAuth = !!accessToken
+    if(!isAuth){
+      navigate("/login")
+    }
+
+  }, [navigate])
 
   useEffect(() => {
     fetchData(currSchedPage);
@@ -380,7 +390,7 @@ function ClassTimetablePage() {
                           More Info
                         </StyledTableCell>
                         <StyledTableCell align="right">Unenroll</StyledTableCell>
-                        <StyledTableCell align="right">Unenroll Class</StyledTableCell>
+                        <StyledTableCell align="right">Unenroll All</StyledTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
