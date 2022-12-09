@@ -41,8 +41,8 @@ export default function CurrentPlanCard() {
   const CardTextOnSuccess = () => {
     return (
       <div>
-        <Typography variant="h4"> {period + " Plan"}</Typography>
-        <Typography variant="h6">{getRate(period, price)}</Typography>
+        <Typography variant="h2"> {period + " Plan"}</Typography>
+        <Typography variant="h6"><b>{getRate(period, price)} </b></Typography>
       </div>
     );
   };
@@ -58,7 +58,7 @@ export default function CurrentPlanCard() {
           alignItems: "center",
           width: "300px",
           height: "300px",
-          padding: "5px",
+          padding: "30px",
         }}
       >
         {error ? <CardTextOnFail /> : <CardTextOnSuccess />}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { Button, Card, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Stack, Box } from "@mui/system";
 import CardTextOnFail from "./CardTextOnFail";
 
 
@@ -55,7 +55,7 @@ function UnsubscribeButton({ setEnrolled}) {
       } else {
         setEnrolled(false);
       }
-    });
+    }).catch(error => console.error(error));
 
   }
   return (<Button
@@ -141,7 +141,7 @@ export default function ShowPlanCards({onMonthlyPlan, setOnMonthlyPlan, onYearly
   }, [setOnYearlyPlan, setOnMonthlyPlan]);
 
   const RenderedOnSuccess = () => (
-      <Stack spacing={2} direction="row">
+      <Stack spacing={30} direction="row">
         <PlanCard
           type="Monthly"
           price={monthlyPrice}
@@ -161,19 +161,16 @@ export default function ShowPlanCards({onMonthlyPlan, setOnMonthlyPlan, onYearly
       </Stack>
   )
    return (
-    <Card
-      elevation={4}
+    <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        width: "900px",
         height: "450px",
-        padding: "30px",
       }}
     >
       {error ? <CardTextOnFail/>: <RenderedOnSuccess/>}
-    </Card>
+    </Box>
   );
 }
