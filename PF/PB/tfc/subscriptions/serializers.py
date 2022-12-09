@@ -15,9 +15,18 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
 
 
 class PaymentMethodSerializer(serializers.ModelSerializer):
+    user = TFCUserSerializer(read_only=True)
     class Meta:
         model = PaymentMethod
-        fields = ["card_number", "security_code"]
+        fields = ["card_number", "security_code", "user"]
+    def create(self, validated_data):
+        user = self.context.get("user")
+
+        card_number = validated_data['card_number']
+        security_code = validated_data['security_code']
+
+        return PaymentMethod.objects.create(user=user, card_number=card_number, security_code=security_code)
+
 
 
 class PaymentHistorySerializer(serializers.ModelSerializer):
@@ -39,17 +48,15 @@ class PaymentHistorySerializer(serializers.ModelSerializer):
         fields = ["amount", "date_time", "payment_method", "payment_method_id", "user", "user_id"]
 
 
+
 class SubscriptionSerializer(serializers.ModelSerializer):
     subscription_type = SubscriptionPlanSerializer(read_only=True)
-    payment_method = PaymentMethodSerializer()
 
     subscription_type_id = serializers.IntegerField(write_only=True)
 
     def create(self, validated_data):
-        payment_method_data = validated_data.pop("payment_method")
         user = self.context.get("user")
 
-        payment_method = PaymentMethod.objects.create(**payment_method_data)
         subscription_type_id = validated_data["subscription_type_id"]
         subscription_type = get_object_or_404(SubscriptionPlan, pk=subscription_type_id).period
 
@@ -62,11 +69,14 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             # monthly
             next_payment_date = last_payment_date + relativedelta(months=1)
 
-        subscription = Subscription.objects.create(payment_method=payment_method, user=user,
+        subscription = Subscription.objects.create( user=user,
                                                    next_payment_date=next_payment_date,
                                                    **validated_data)
         return subscription
 
     class Meta:
         model = Subscription
-        fields = ["subscription_type", "payment_method", "subscription_type_id"]
+        fields = ["subscription_type",  "subscription_type_id"]
+
+
+

@@ -39,6 +39,7 @@ class SubscriptionPlan(models.Model):
 class PaymentMethod(models.Model):
     card_number = models.PositiveIntegerField()
     security_code = models.PositiveIntegerField()
+    user = models.OneToOneField(to=TFCUser, on_delete=CASCADE, related_name="payment_method")
 
 
 class PaymentHistory(models.Model):
@@ -51,8 +52,6 @@ class PaymentHistory(models.Model):
 class Subscription(models.Model):
     # subscription type is one subscription type to many subscriptions
     subscription_type = models.ForeignKey(to=SubscriptionPlan, on_delete=CASCADE)
-    # subscription payment method is one subscription to one payment mehtods
-    payment_method = models.OneToOneField(to=PaymentMethod, null=True, on_delete=SET_NULL)
     # add user
     user = models.ForeignKey(to=TFCUser, on_delete=CASCADE)
     next_payment_date = models.DateField()
@@ -87,7 +86,7 @@ class Subscription(models.Model):
         today = datetime.date.today()
         payment_amount = self.subscription_type.price
         payment_history = PaymentHistory.objects.create(amount=payment_amount,
-                                                        payment_method=self.payment_method, user=self.user)
+                                                        payment_method=self.user.payment_method, user=self.user)
         payment_history.save()
         period = get_period(self.subscription_type.period)
         self.next_payment_date = self.get_next_payment_date_from_date(today, period)
@@ -128,5 +127,8 @@ def has_active_subscription(user_id):
 
 
     return query.exists() and query.get().get_billing_period_end() > date
+
+def has_payment_method(user_id):
+    return PaymentMethod.objects.filter(user=user_id).exists()
 
 
