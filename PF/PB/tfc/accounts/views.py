@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import MultipleObjectsReturned
 from rest_framework import status
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -77,7 +78,10 @@ class RetrieveClassScheduleView(APIView):
         schedule_sorted = []
 
         for s in schedule:
-            time_interval = TimeInterval.objects.get(class_offering=s)
+            try:
+                time_interval = TimeInterval.objects.get(class_offering=s)
+            except MultipleObjectsReturned:
+                time_interval = TimeInterval.objects.filter(class_offering=s).first()
 
             schedule_sorted.append((s, time_interval.day, time_interval.start_time))
 
@@ -119,7 +123,10 @@ class EnrolledClassesView(APIView):
             c_instance = c.class_instance
             c_offering = c.class_offering
 
-            time_interval = TimeInterval.objects.get(class_offering=c_offering)
+            try:
+                time_interval = TimeInterval.objects.get(class_offering=c_offering)
+            except MultipleObjectsReturned:
+                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
 
             combined_date = datetime.combine(c_instance.date, time_interval.start_time)
 
@@ -169,7 +176,10 @@ class RetrieveClassHistoryView(APIView):
             c_instance = c.class_instance
             c_offering = c.class_offering
 
-            time_interval = TimeInterval.objects.get(class_offering=c_offering)
+            try:
+                time_interval = TimeInterval.objects.get(class_offering=c_offering)
+            except MultipleObjectsReturned:
+                time_interval = TimeInterval.objects.filter(class_offering=c_offering).first()
 
             combined_date = datetime.combine(c_instance.date, time_interval.start_time)
 

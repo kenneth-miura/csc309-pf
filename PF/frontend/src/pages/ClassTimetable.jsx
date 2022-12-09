@@ -443,7 +443,7 @@ function ClassTimetablePage() {
                               variant="primary"
                               style={{
                                 color: "white",
-                                backgroundColor: "#d62828"
+                                backgroundColor: "#990d00"
                               }}
                               onClick={() => {
                                 handleUnenrollEntireClass(info.class_offering.id);
