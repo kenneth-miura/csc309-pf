@@ -34,7 +34,7 @@ function SubscribeButton({setEnrolled, setOtherEnrolled, target_plan_id}){
   return (<Button
     onClick={subscribe}
     variant="contained"
-    sx={{ maxHeight: "50px", width: "150px"}}
+    sx={{ maxHeight: "50px", width: "150px", backgroundColor: "#d62828", color: "white", marginTop: "10px"}}
   >
     Enroll
   </Button>)
@@ -61,7 +61,7 @@ function UnsubscribeButton({ setEnrolled}) {
   return (<Button
     onClick={unsubscribe}
     variant="contained"
-    sx={{ maxHeight: "50px", width: "150px"}}
+    sx={{ maxHeight: "50px", width: "150px", backgroundColor: "#d62828", color: "white", marginTop: "10px"}}
   >
     Cancel Plan
   </Button>)
